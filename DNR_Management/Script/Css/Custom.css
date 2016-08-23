@@ -1,0 +1,28 @@
+﻿body {
+}
+
+.portal_tiles{
+    margin : 10px 10px 10px 10px;
+}
+
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+  background-color: #f5f5f5;
+}
+
+.but{
+        background-color: rgba(195, 27, 27, 0.77);
+}
+
+.tablay{
+    background-color: rgba(255, 235, 59, 0.81);
+}
+
+.tab3{
+    width: 93px;
+    height: 42px;
+}
