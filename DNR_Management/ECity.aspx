@@ -123,7 +123,7 @@
                     <thead>
                         <tr style="border:solid">
                             <th>D/C No</th>
-                            <th>Disconnected Dat</th>
+                            <th>Disconnected Date</th>
                             <th>Reconnected Date</th>
                         </tr>
                     </thead>

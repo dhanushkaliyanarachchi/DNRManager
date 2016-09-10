@@ -83,17 +83,18 @@ namespace DNR_Manager.Business
             if(newConnectionLog.logId == 0)
             {
                 _connectionLogRepository.insertDisconnectionDetails(acc, DDate,time,Discconectedby);
-                _connectionRepository.updateConnectionStatus(accNo);
+                _connectionRepository.updateConnectionStatus(accNo,0);
                 return true;
                 
             }
 
             else
             {
-                if (newConnectionLog.DisconnectedDate == null)
+                if (newConnectionLog.DisconnectedDate == null || newConnectionLog.DisconnectedDate==DateTime.MinValue)
                 {
                     int lgID = newConnectionLog.logId;
                     _connectionLogRepository.updateDisconnectionDetails(lgID, accNo, DDate, Discconectedby, time);
+                    _connectionRepository.updateConnectionStatus(accNo, 1);
                     return true;
                 }
 
@@ -104,9 +105,9 @@ namespace DNR_Manager.Business
             }
         }
 
-        public void setConnectionStatus(string acc)
+        public void setConnectionStatus(string acc,int status)
         {
-            _connectionRepository.updateConnectionStatus(acc);
+            _connectionRepository.updateConnectionStatus(acc, status);
         }
 
         public List<ConnectionLogModel> gertConnectionLogToTable(string accno)
@@ -141,6 +142,43 @@ namespace DNR_Manager.Business
         public void updateDepetAndWalkSequence(string accountNo, string depot, string readerCode, string dailyPackNo, string walkSequence)
         {
            _connectionRepository.UpdateDepotAndWalkOrder(accountNo,depot,readerCode,dailyPackNo,walkSequence);
+        }
+
+        public int insertLetterDetails(string accountNo, string LetterID)
+        {
+           return _connectionRepository.insertLetterDetailsToTable(accountNo, LetterID);
+        }
+
+        public int getnextID(string Depot,string year)
+        {
+            int maxIdfromConnectionLog = _connectionLogRepository.getnextID(Depot, year);
+            int maxIdfromLetterDetails = _connectionRepository.getnextIDfromLetterToBeSent(Depot, year);
+            if (maxIdfromConnectionLog > maxIdfromLetterDetails)
+            {
+                return maxIdfromConnectionLog ++;
+            }
+
+            else
+            {
+                return maxIdfromLetterDetails + 1 ;
+            }
+        }
+
+        public void updateLetterStatus(string accNo)
+        {
+            _connectionLogRepository.UpdateLetterStatus(accNo);
+        }
+
+        public List<LetterDetailModel> getLetterDetailstoTable()
+        {
+            var letterDetail = _connectionRepository.getLetterDetailsToUI();
+            var result = new List<LetterDetailModel>();
+            foreach (var items in letterDetail)
+            {
+                result.Add(new LetterDetailModel { AccountNo = items.AccountNo, AddressLine1 = items.AddressLine1, AddressLine2 = items.AddressLine2, AddressLine3 = items.AddressLine3, LetterId = items.LetterId});
+            }
+
+            return result;
         }
     }
 }

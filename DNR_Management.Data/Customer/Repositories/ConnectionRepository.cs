@@ -1,6 +1,7 @@
 ﻿using DNR_Manager.Data.Customer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -248,9 +249,9 @@ namespace DNR_Manager.Data.Customer.Repositories
 
        
 
-        public void updateConnectionStatus(string accNo)
+        public void updateConnectionStatus(string accNo,int status)
         {
-            string querytoUpdateconnection = string.Format("UPDATE Connections SET connectionStatus = '{0}' WHERE AccountNo = '{1}'",0,accNo);
+            string querytoUpdateconnection = string.Format("UPDATE Connections SET connectionStatus = '{0}' WHERE AccountNo = '{1}'", status, accNo);
             try
             {
                 command.CommandText = querytoUpdateconnection;
@@ -283,6 +284,111 @@ namespace DNR_Manager.Data.Customer.Repositories
                 connection.Close();
             }
         }
-       
+
+        public int insertLetterDetailsToTable(string accountNo, string LetterID)
+        {
+            string queryForInsertLetterDetails = string.Format("INSERT INTO LettersToBesent VALUES ('{0}','{1}')", accountNo, LetterID);
+            int affectedRows = 0;
+            try
+            {
+                connection.Open();
+                command.CommandText = queryForInsertLetterDetails;
+                affectedRows = command.ExecuteNonQuery();
+                
+            }
+
+            catch(Exception ex)
+            {
+
+            }
+
+            finally
+            {
+
+            }
+            return affectedRows;
+        }
+
+        public int getnextIDfromLetterToBeSent(string Depot, string year)
+        {
+            string querytogetId = string.Format("SELECT LetterId FROM LettersToBesent WHERE LetterID LIKE '{0}/{1}/%'", Depot, year);
+            command.CommandText = querytogetId;
+            int Id = 0;
+            try
+            {
+                connection.Open();
+                reader = command.ExecuteReader();
+                ArrayList idList = new ArrayList();
+                if ((reader.HasRows) == true)
+                {
+                    while (reader.Read())
+                    {
+                        string letterId = (string)reader["LetterId"];
+                        Id = Int32.Parse(letterId.Substring(letterId.Length - 4));
+                        idList.Add(Id);
+                    }
+                    int max = 0; //assumes + numbers
+                    int temp;
+                    foreach (int items in idList)
+                    {
+                        temp = items;
+                        if (max < temp)
+                        { max = temp; }
+                    }
+                    Id = max;
+                }
+
+                else if ((reader.HasRows) == false)
+                {
+                    Id = 0;
+                }
+            }
+
+            catch (Exception ex)
+            {
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return Id;
+        }
+
+        public List<LetterDetails> getLetterDetailsToUI()
+        {
+            string letterQuery = string.Format("SELECT LettersToBesent.AccountNo, LettersToBesent.LetterId, ConsumerDetails.[Address 1], ConsumerDetails.[Address 2], ConsumerDetails.[Address 3] FROM LettersToBesent INNER JOIN ConsumerDetails ON LettersToBesent.AccountNo = ConsumerDetails.[Account No] ORDER BY LettersToBesent.LetterId");
+            var letterDetail = new List<LetterDetails>();
+            try
+            {
+                connection.Open();
+                command.CommandText = letterQuery;
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    LetterDetails newletterDetail = new LetterDetails();
+                    newletterDetail.AccountNo = reader["AccountNo"] != DBNull.Value ? (string)reader["AccountNo"] : "";
+                    newletterDetail.AddressLine1 = reader["Address 1"] != DBNull.Value ? (string)reader["Address 1"] : "";
+                    newletterDetail.AddressLine2 = reader["Address 2"] != DBNull.Value ? (string)reader["Address 2"] : "";
+                    newletterDetail.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 3"] : "";
+                    newletterDetail.LetterId = reader["LetterId"] != DBNull.Value ? (string)reader["LetterId"] : "";
+                    letterDetail.Add(newletterDetail);
+                }
+            }
+
+            catch(Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return letterDetail;
+        }
     }
 }

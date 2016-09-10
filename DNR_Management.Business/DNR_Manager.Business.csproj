@@ -42,6 +42,7 @@
     <Compile Include="ConnectionService.cs" />
     <Compile Include="Models\ConnectionLogModel.cs" />
     <Compile Include="Models\ConnectionModel.cs" />
+    <Compile Include="Models\LetterDetailModel.cs" />
     <Compile Include="Models\LetterSentDetailModel.cs" />
     <Compile Include="Models\PaymentDetailsModel.cs" />
     <Compile Include="Models\PaymentModel.cs" />

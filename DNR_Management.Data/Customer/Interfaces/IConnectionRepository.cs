@@ -11,6 +11,6 @@ namespace DNR_Manager.Data.Customer.Interfaces
         void AddAccount(Account account);
         bool AddPaymentDetails(string PMethod,string AccNo, DateTime Date);
         //ConsumerDetail GetConsumerAccount(string accountNo);
-        void updateConnectionStatus(string accNo);
+        void updateConnectionStatus(string accNo, int status);
     }
 }

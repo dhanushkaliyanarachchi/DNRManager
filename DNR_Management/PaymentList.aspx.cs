@@ -29,7 +29,10 @@ namespace DNR_Manager
         {
             connectionService = new ConnectionService();
             var affectedRows = connectionService.UpdateReconnection(accountNo, paymentDate, reconnectedDate, disconnectedBy, PaymentMode);
-
+            if (affectedRows == true)
+            {
+                connectionService.setConnectionStatus(accountNo, 1);
+            }
         }
 
         [WebMethod]

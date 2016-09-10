@@ -47,6 +47,7 @@
     <Compile Include="Customer\ConsumerDetail.cs" />
     <Compile Include="Customer\Interfaces\IConnectionLogReporsitory.cs" />
     <Compile Include="Customer\Interfaces\IConnectionRepository.cs" />
+    <Compile Include="Customer\LetterDetails.cs" />
     <Compile Include="Customer\LetterSentDetails.cs" />
     <Compile Include="Customer\PaymentDetails.cs" />
     <Compile Include="Customer\Repositories\ConnectionLogReporsitory.cs" />

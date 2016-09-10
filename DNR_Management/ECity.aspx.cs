@@ -120,7 +120,7 @@ namespace DNR_Manager.Web
             bool updatestatus = newService.setPaymentDetail(accNo, Pmethod, Date);
             if (updatestatus == true)
             {
-                newService.setConnectionStatus(accNo);
+                newService.setConnectionStatus(accNo,0);
                 ClientScript.RegisterStartupScript(GetType(), "hwa", "alert('Pamentnt Details Updated');", true);
             }
             else

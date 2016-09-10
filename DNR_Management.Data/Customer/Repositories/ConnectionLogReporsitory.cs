@@ -1,6 +1,7 @@
 ﻿using DNR_Manager.Data.Customer.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Collections;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -91,9 +92,9 @@ namespace DNR_Manager.Data.Customer.Repositories
 
             DateTime DisconnectedDate = DateTime.Parse(DDate);
             string[] time = DisconnectedTime.Split(new char[] { ':' });
-            DisconnectedDate.Date.AddHours(double.Parse(time[0])).AddMinutes(double.Parse(time[1]));
+            DateTime DDDate = DisconnectedDate.Date.AddHours(double.Parse(time[0])).AddMinutes(double.Parse(time[1]));
 
-            string quaryforUpdateDisconnectionDetails = string.Format("UPDATE ConnectionLogs SET DisconnectedDate = '{0}',DisconnectedBy ='{1}',Completness = '{2}' WHERE LogID = '{3}' AND AccountNo = '{4}'", DisconnectedDate,  DisconnectedBy,0, LogID, Accountno);
+            string quaryforUpdateDisconnectionDetails = string.Format("UPDATE ConnectionLogs SET DisconnectedDate = '{0}',DisconnectedBy ='{1}',Completness = '{2}' WHERE LogID = '{3}' AND AccountNo = '{4}'", DDDate.ToString("yyyy-MM-dd HH:mm"), DisconnectedBy, 1, LogID, Accountno);
             try
             {
                 
@@ -256,7 +257,7 @@ namespace DNR_Manager.Data.Customer.Repositories
         public List<LetterSentDetails> getLetterSentDetails()
         {
             var LetterDetails = new List<LetterSentDetails>();
-            string queryLettersentDetails = string.Format("SELECT ConnectionLogs.AccountNo, ConnectionLogs.DisconnectedDate, ConsumerDetails.[Address 1], ConsumerDetails.[Address 2], ConsumerDetails.[Address 3],ConsumerDetails.Depot WHERE ConnectionLogs.LetterStatus = 0 AND ConnectionLogs.Completness = 0 FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No]");
+            string queryLettersentDetails = string.Format("SELECT ConnectionLogs.AccountNo, ConnectionLogs.DisconnectedDate, ConsumerDetails.[Address 1], ConsumerDetails.[Address 2], ConsumerDetails.[Address 3],ConsumerDetails.Depot FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No] WHERE ConnectionLogs.LetterStatus = 0 AND ConnectionLogs.Completness = 0 ");
             command.CommandText = queryLettersentDetails;
             
             try
@@ -272,6 +273,7 @@ namespace DNR_Manager.Data.Customer.Repositories
                     newLeterdetail.AddressLine2 = reader["Address 2"] != DBNull.Value ? (string)reader["Address 2"] : "";
                     newLeterdetail.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 3"] : "";
                     newLeterdetail.Depot = reader["Depot"] != DBNull.Value ? (string)reader["Depot"] : "";
+                    LetterDetails.Add(newLeterdetail);
                 } 
             }
             catch(Exception ex){
@@ -280,12 +282,80 @@ namespace DNR_Manager.Data.Customer.Repositories
 
             finally
             {
+                reader.Close();
                 connection.Close();
             }
             return LetterDetails;
         }
 
-        
+        public int getnextID(string Depot, string year)
+        {
+            string querytogetId = string.Format("SELECT LetterId FROM ConnectionLogs WHERE LetterID LIKE '{0}/{1}/%'", Depot, year);
+            command.CommandText = querytogetId;
+            int Id =0;
+            try
+            {
+                connection.Open();
+                reader = command.ExecuteReader();
+                ArrayList idList = new ArrayList();
+                if ((reader.HasRows) == true)
+                {
+                    while (reader.Read())
+                    {
+                        string letterId = (string)reader["LetterId"];
+                        Id = Int32.Parse(letterId.Substring(letterId.Length - 4));
+                        idList.Add(Id);
+                    }
+                    int max = 0; //assumes + numbers
+                    int temp;
+                    foreach (int items in idList)
+                    {
+                        temp = items;
+                        if (max < temp)
+                           { max = temp; }
+                    }
+                    Id = max;
+                }
 
+                else if ((reader.HasRows) == false)
+                {
+                    Id = 0;
+                }
+            }
+
+            catch (Exception ex)
+            {
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return Id;
+        }
+
+        public void UpdateLetterStatus(string accNo)
+        {
+            string updateQuery = string.Format("UPDATE ConnectionLogs SET LetterStatus = '1' WHERE AccountNo ='{0}' AND Completness = '0' AND LetterStatus = '0'", accNo);
+            command.CommandText = updateQuery;
+            try
+            {
+                command.CommandText = updateQuery;
+                connection.Open();
+                command.ExecuteNonQuery();
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+        }
+ 
     }
 }

@@ -61,7 +61,7 @@
                                           {%>
                                         <tr>
                                             <td class="accNo" onclick="updateDepot(<%:item.AccountNo %>)">
-                                                <a><%:item.AccountNo %></a>
+                                                <a class="accNumber"><%:item.AccountNo %></a>
                                                 <div class="modal" id="<%:item.AccountNo %>" title="ChangeDepot">
                                                     <div class="row">
                                                         <div class="form-group">
@@ -69,7 +69,7 @@
                                                             <div class="col-sm-9 selectStation">
                                                                 <select>
                                                                     <option value="Fullerton">Fullerton</option>
-                                                                    <option value="Matugama">Matugama</option>
+                                                                    <option value="Mathugama">Mathugama</option>
                                                                     <option value="Beruwala">Beruwala</option>
                                                                     <option value="Panadura">Panadura</option>
                                                                     <option value="Agalawatta">Agalawatta</option>
@@ -151,15 +151,15 @@
                                           {%>
                                         <tr>
                                             <td class="accNo" onclick="updateDepot(<%:item.AccountNo %>)">
-                                                <a><%:item.AccountNo %></a>
+                                                <a class="accNumber"><%:item.AccountNo %></a>
                                                 <div class="modal" id="<%:item.AccountNo %>" title="ChangeDepot">
                                                     <div class="row">
                                                         <div class="form-group">
                                                             <label for="Select Depot" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Depot:</label>
-                                                            <div class="col-sm-9">
+                                                            <div class="col-sm-9 selectStation">
                                                                 <select>
                                                                     <option value="Fullerton">Fullerton</option>
-                                                                    <option value="Matugama">Matugama</option>
+                                                                    <option value="Mathugama">Mathugama</option>
                                                                     <option value="Beruwala">Beruwala</option>
                                                                     <option value="Panadura">Panadura</option>
                                                                     <option value="Agalawatta">Agalawatta</option>
@@ -171,19 +171,19 @@
                                                         <div class="form-group">
                                                             <label for="changeWalkOrder" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Walk Order:</label>
                                                             <div class="col-sm-2">
-                                                                <input type="text" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox"/>
+                                                                <input type="text" id = "ReaderCode" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox"/>
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
+                                                                <input type="text" id="DailyPackNo" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
+                                                                <input type="text" id="WalkSequence" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class ="row">
-                                                        <input type="button" class="btn btn-primary" data-accno="<%:item.AccountNo%>" value="Update" />
+                                                        <input type="button" class="btn btn-primary btn-UpdateDepot" data-accno="<%:item.AccountNo%>" value="Update" />
                                                     </div>
                                                 </div>
                                             </td>
@@ -238,15 +238,15 @@
                                           {%>
                                         <tr>
                                             <td class="accNo" onclick="updateDepot(<%:item.AccountNo %>)">
-                                                <a><%:item.AccountNo %></a>
+                                                <a class="accNumber"><%:item.AccountNo %></a>
                                                 <div class="modal" id="<%:item.AccountNo %>" title="ChangeDepot">
                                                     <div class="row">
                                                         <div class="form-group">
                                                             <label for="Select Depot" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Depot:</label>
-                                                            <div class="col-sm-9">
+                                                            <div class="col-sm-9 selectStation">
                                                                 <select>
                                                                     <option value="Fullerton">Fullerton</option>
-                                                                    <option value="Matugama">Matugama</option>
+                                                                    <option value="Mathugama">Mathugama</option>
                                                                     <option value="Beruwala">Beruwala</option>
                                                                     <option value="Panadura">Panadura</option>
                                                                     <option value="Agalawatta">Agalawatta</option>
@@ -258,19 +258,19 @@
                                                         <div class="form-group">
                                                             <label for="changeWalkOrder" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Walk Order:</label>
                                                             <div class="col-sm-2">
-                                                                <input type="text" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox"/>
+                                                                <input type="text" id = "ReaderCode" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox"/>
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
+                                                                <input type="text" id="DailyPackNo" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
+                                                                <input type="text" id="WalkSequence" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class ="row">
-                                                        <input type="button" class="btn btn-primary" data-accno="<%:item.AccountNo%>" value="Update" />
+                                                        <input type="button" class="btn btn-primary btn-UpdateDepot" data-accno="<%:item.AccountNo%>" value="Update" />
                                                     </div>
                                                 </div>
                                             </td>
@@ -290,7 +290,7 @@
                                                 <input data-format="yyyy-MM-dd hh:mm:ss" class="recon" type="date" />
                                                 <input type="hidden" value="<%:item.paymentMethod%>" class="paymentMethod" />
                                             </td>
-                                            <td class="reconnectedBy">
+                                            <td class="reconnectedBy ">
                                                 <select>
                                                     <option value="Ruwan">Ruwan</option>
                                                     <option value="Nuwan">Nuwan</option>
@@ -326,15 +326,15 @@
                                           {%>
                                         <tr>
                                             <td class="accNo" onclick="updateDepot(<%:item.AccountNo %>)">
-                                                <a><%:item.AccountNo %></a>
+                                                <a class="accNumber"><%:item.AccountNo %></a>
                                                 <div class="modal" id="<%:item.AccountNo %>" title="ChangeDepot">
                                                     <div class="row">
                                                         <div class="form-group">
                                                             <label for="Select Depot" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Depot:</label>
-                                                            <div class="col-sm-9">
+                                                            <div class="col-sm-9 selectStation">
                                                                 <select>
                                                                     <option value="Fullerton">Fullerton</option>
-                                                                    <option value="Matugama">Matugama</option>
+                                                                    <option value="Matugama">Mathugama</option>
                                                                     <option value="Beruwala">Beruwala</option>
                                                                     <option value="Panadura">Panadura</option>
                                                                     <option value="Agalawatta">Agalawatta</option>
@@ -346,19 +346,19 @@
                                                         <div class="form-group">
                                                             <label for="changeWalkOrder" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Walk Order:</label>
                                                             <div class="col-sm-2">
-                                                                <input type="text" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox"/>
+                                                                <input type="text" id = "ReaderCode" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox"/>
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
+                                                                <input type="text" id="DailyPackNo" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
+                                                                <input type="text" id="WalkSequence" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class ="row">
-                                                        <input type="button" class="btn btn-primary" data-accno="<%:item.AccountNo%>" value="Update" />
+                                                        <input type="button" class="btn btn-primary btn-UpdateDepot" data-accno="<%:item.AccountNo%>" value="Update" />
                                                     </div>
                                                 </div>
                                             </td>
@@ -414,15 +414,15 @@
                                           {%>
                                         <tr>
                                             <td class="accNo" onclick="updateDepot(<%:item.AccountNo %>)">
-                                                <a><%:item.AccountNo %></a>
+                                                <a class="accNumber"><%:item.AccountNo %></a>
                                                 <div class="modal" id="<%:item.AccountNo %>" title="ChangeDepot">
                                                     <div class="row">
                                                         <div class="form-group">
                                                             <label for="Select Depot" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Depot:</label>
-                                                            <div class="col-sm-9">
+                                                            <div class="col-sm-9 selectStation">
                                                                 <select>
                                                                     <option value="Fullerton">Fullerton</option>
-                                                                    <option value="Matugama">Matugama</option>
+                                                                    <option value="Mathugama">Mathugama</option>
                                                                     <option value="Beruwala">Beruwala</option>
                                                                     <option value="Panadura">Panadura</option>
                                                                     <option value="Agalawatta">Agalawatta</option>
@@ -434,19 +434,19 @@
                                                         <div class="form-group">
                                                             <label for="changeWalkOrder" class="col-sm-3 control-label" style="padding-left: 0px; padding-top: 0px">Walk Order:</label>
                                                             <div class="col-sm-2">
-                                                                <input type="text" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox ReaderCode"/>
+                                                                <input type="text" id = "ReaderCode" name="ReaderCode" value="<%:item.ReaderCode%>" class="resizedTextbox ReaderCode"/>
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
+                                                                <input type="text" id="DailyPackNo" name="DailyPackNo" value="<%:item.DailyPackNo%>" class="resizedTextbox" />
                                                             </div>
                                                             <div class="col-sm-3">
-                                                                <input type="text" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
+                                                                <input type="text" id="WalkSequence" name="WalkSequence" value="<%:item.WalkSequence%>" class="resizedTextbox2"/>
                                                             </div>
                                                         </div>
                                                     </div>
 
                                                     <div class ="row">
-                                                        <input type="button" class="btn btn-primary" data-accno="<%:item.AccountNo%>" value="Update" />
+                                                        <input type="button" class="btn btn-primary btn-UpdateDepot" data-accno="<%:item.AccountNo%>" value="Update" />
                                                     </div>
                                                 </div>
                                             </td>
@@ -530,7 +530,7 @@
 
                         </div>
                         <div class="modal-footer">
-                            <asp:Button ID="ButtonUpdate" class="btn btn-primary" runat="server" Text="Update" type="submit" />
+                            <asp:Button ID="ButtonUpdate" class="btn btn-primary btn-UpdateDepot" runat="server" Text="Update" type="submit" />
                         </div>
                     </div>
                 </div>
@@ -570,7 +570,7 @@
     <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
     <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
 
-    <script type="text/javascript">
+    <script type="text/javascript">UpdatePayment
 
 
         $(".btn-fullerton").click(function () {
@@ -578,7 +578,7 @@
             var $row = $(this).closest("tr");
 
             var address = $row.find(".address").text().trim();
-            var accountNo = $row.find(".accNo").text().trim();
+            var accountNo = $row.find(".accNo .accNumber").text().trim();
             var paymentDate = $row.find(".paymentDy").text().trim();
             var reconnectedDate = $row.find(".reconnectedDate .recon").val().trim();
             var disconnectedBy = $row.find(".reconnectedBy select option:selected").text().trim();

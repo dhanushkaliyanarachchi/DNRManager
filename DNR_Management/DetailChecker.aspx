@@ -14,7 +14,7 @@
                 <div class="col-xs-1">
 
                     <ul class="nav nav-tabs tabs-left">
-                        <li class="active but tab3" style="width: 90px"><a href="#home" data-toggle="tab">Update</a></li>
+                        <li class="but tab3" style="width: 90px"><a href="#home" data-toggle="tab">Update</a></li>
                         <li class="but tab3" style="width: 90px"><a href="#profile" data-toggle="tab">Invoices</a></li>
                         <li class="but tab3" style="width: 90px"><a href="#messages" data-toggle="tab">Inqueries</a></li>
                         <li class="but tab3" style="width: 90px"><a href="#settings" data-toggle="tab">Retention</a></li>
@@ -80,7 +80,7 @@
 
                         <div class="tab-pane" id="profile">
                             <div class="row">
-                                <asp:Button ID="generateLetterList" type="submit" runat="server" Text="Generate Letter List" Style="margin-left: 50px" />
+                                <asp:Button ID="generateLetterList" type="submit" runat="server" Text="Generate Letter List" Style="margin-left: 50px" OnClick="generateLetterList_Click" />
                             </div>
                             <table class="table">
                                 <thead>
@@ -91,15 +91,36 @@
                                         <th>Sent Date</th>
                                         <th>Send</th>
                                     </tr>
-                                    <tr>
-                                    </tr>
                                 </thead>
+                                <%var LetterDetailModel = letterDetailModel;
+                                  foreach (var item in LetterDetailModel)
+                                  {%>
+                                <tr>
+                                    <td class="accNo">
+                                        <%:item.AccountNo %>
+                                    </td>
+                                    <td class="address"><%:item.AddressLine1%><br />
+                                        <%:item.AddressLine2%><br />
+                                        <%:item.AddressLine3%>
+                                    </td>
+                                    <td class="letterId">
+                                        <%:item.LetterId %>
+                                    </td>
+                                    <td class="LettersentDate">
+                                        <input data-format="yyyy-MM-dd hh:mm:ss" class="Lettersent" type="date" />
+                                    </td>
+                                    <td>
+                                        <input type="button" class="btn btn-primary btn_Update" data-accno="<%:item.AccountNo%>" value="Update" />
+                                    </td>
+                                </tr>
+                                <%} %>
                             </table>
                             <div class="row">
                             </div>
                         </div>
 
-
+                        <div class="tab-pane" id="messages">
+                        </div> 
                     </div>
 
                 </div>
@@ -108,4 +129,44 @@
             </div>
         </div>
     </div>
+     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/json2/20130526/json2.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.4/jquery-ui.js"></script>
+    <link href="http://code.jquery.com/ui/1.10.4/themes/ui-lightness/jquery-ui.css" rel="stylesheet" />
+
+    <script type ="text/javascript">
+        
+        $(".btn_Update").click(function()
+        {
+            debugger;
+            var $row =  $(this).closest("tr");
+            var accountNo = $row.find(".accNo").text().trim();
+            var letterId = $row.find(".letterId").text().trim();
+            var sentDate = $row.find(".LettersentDate .Lettersent").val().trim();
+
+            var LettersentModel = {
+                accountNo : accountNo,
+                letterID : letterId,
+                sentDate : sentDate
+            }
+
+            $.ajax({
+                type: "POST",
+                url: "DetailChecker.aspx/updateLetterDate",
+                data: JSON.stringify(LettersentModel),
+                contentType: "application/json",
+                dataType: "json",
+                success: OnSuccess,
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
+
+        });
+
+        function OnSuccess(response) {
+            alert(response.d);
+        }
+
+    </script>
 </asp:Content>
