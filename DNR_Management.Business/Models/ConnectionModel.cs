@@ -18,6 +18,8 @@ namespace DNR_Manager.Models
         public DateTime DisconectedDate { get; set; }
         public string DisconnectedBy { get; set; }
         public DateTime Time { get; set; }
+        public string FirstName { get; set; }
+        public string SecondName { get; set; }
         //public string WalkOrder { get; set; } walkOder should be loaded when enter an acc no.
     } 
 }

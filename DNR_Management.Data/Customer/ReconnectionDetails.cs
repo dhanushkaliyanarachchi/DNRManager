@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DNR_Manager.Data.Customer
 {
-    public class PaymentDetails
+    public class ReconnectionDetails
     {
         public string AccountNo { get; set; }
         public DateTime PaymentDate { get; set; }
@@ -19,6 +19,8 @@ namespace DNR_Manager.Data.Customer
         public string DailyPackNo { get; set; }
         public string WalkSeq { get; set; }
         public string ContactNo { get; set; }
-        public int status { get; set; }
+        public DateTime ReconnectedDate { get; set; }
+        public string ReconnectedBy { get; set; }
+
     }
 }

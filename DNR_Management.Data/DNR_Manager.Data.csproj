@@ -45,13 +45,20 @@
     <Compile Include="Customer\Connection.cs" />
     <Compile Include="Customer\ConnectionLog.cs" />
     <Compile Include="Customer\ConsumerDetail.cs" />
+    <Compile Include="Customer\ContractorList.cs" />
     <Compile Include="Customer\Interfaces\IConnectionLogReporsitory.cs" />
     <Compile Include="Customer\Interfaces\IConnectionRepository.cs" />
     <Compile Include="Customer\LetterDetails.cs" />
     <Compile Include="Customer\LetterSentDetails.cs" />
+    <Compile Include="Customer\OrderCardDetails.cs" />
     <Compile Include="Customer\PaymentDetails.cs" />
+    <Compile Include="Customer\ReconnectionDetails.cs" />
     <Compile Include="Customer\Repositories\ConnectionLogReporsitory.cs" />
     <Compile Include="Customer\Repositories\ConnectionRepository.cs" />
+    <Compile Include="Customer\Repositories\UserRepository.cs" />
+    <Compile Include="Customer\ThousandListDetails.cs" />
+    <Compile Include="Customer\ThousandList.cs" />
+    <Compile Include="Customer\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

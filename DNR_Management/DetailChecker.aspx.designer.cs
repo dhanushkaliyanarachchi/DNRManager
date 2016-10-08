@@ -31,13 +31,13 @@ namespace DNR_Manager {
         protected global::System.Web.UI.WebControls.TextBox TextBoxDisconnectedDate;
         
         /// <summary>
-        /// TextBoxDisconnectedBy control.
+        /// DisconnectedByList control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox TextBoxDisconnectedBy;
+        protected global::System.Web.UI.WebControls.DropDownList DisconnectedByList;
         
         /// <summary>
         /// TextBoxDisconnectedTime control.
@@ -74,5 +74,23 @@ namespace DNR_Manager {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button generateLetterList;
+        
+        /// <summary>
+        /// dvInfo control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlGenericControl dvInfo;
+        
+        /// <summary>
+        /// ButtonOrderCardList control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button ButtonOrderCardList;
     }
 }

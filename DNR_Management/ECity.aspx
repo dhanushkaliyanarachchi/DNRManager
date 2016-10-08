@@ -6,6 +6,13 @@
             $('#PaymentModal').modal('show');
         };
     </script>
+    <style>
+    #NewAccountModal {
+top:20%;
+left:50%;
+outline: none;
+}
+</style>
 </asp:Content>
 
 <asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
@@ -24,7 +31,7 @@
                         <div class="form-group">
                             <label for="AccountNo" class="col-sm-2 control-label">Account Number:</label>
                             <div class="col-sm-8">
-                                <asp:TextBox ID="TextBox1" runat="server" class="form-control" OnTextChanged="TextBox1_TextChanged1" Type="phone"></asp:TextBox>
+                                <asp:TextBox ID="TextBox1" runat="server" class="form-control" OnTextChanged="TextBox1_TextChanged1" Type="phone" onkeypress="return NumberOnly()"></asp:TextBox>
                             </div>
                             <div class="col-sm-2">
                                 <asp:Button ID="btnSearch" class="btn btn-default" runat="server" Text="Search" OnClick="btnSearch_Click" />
@@ -39,7 +46,7 @@
                             <label for="Address" class="col-sm-2 control-label" style="margin-left: 10px">Address:</label>
                             <div class="col-sm-8">
                                 <%--<textarea rows="5"></textarea>--%>
-                                <asp:TextBox ID="TextBox2" runat="server" Rows="4" TextMode="MultiLine" ReadOnly="true" Enabled="false"></asp:TextBox>
+                                <asp:TextBox ID="TextBox2" runat="server" Rows="5" TextMode="MultiLine" ReadOnly="true" Enabled="false" cols="35"></asp:TextBox>
                             </div>
                         </div>
 
@@ -98,12 +105,9 @@
                 </div>
                 <div class="row" style="margin: 25px">
                     <div class="form-group">
-                        <%--<button value="moredetails">More Details</button>--%>
                         <asp:Button ID="Buttonmoredetails" class="btn btn-secondary btn-sm" runat="server" Text="More Details" OnClick="btnMoreDetails_Click" />
-                        <asp:Button ID="ButtonUpdatePayment" class="btn btn-secondary btn-sm" runat="server" Text="Update Payment" OnClick="btnUpdate_Click" />
-                        <%--<button value="UpdatePayment">Update Pament</button>--%>
-                        <asp:Button ID="Buttonupdatestatus" class="btn btn-secondary btn-sm" runat="server" Text="Update Status" OnClick="btnUpdateStatus_Click" />
-                        <%--<button value="updatestatus">Update Status</button>--%>
+                        <input type ="button" class ="btn btn-secondary btn-UpdatePayment" value ="Update Payment" style ="margin-left:20px; margin-bottom:10px" onclick ="Openmodal()" />
+                        <input type ="button" class ="btn btn-secondary btn-newaccount" value ="Add New Account" style ="margin-left:20px; margin-bottom:10px" onclick ="Openmodalnewaccount()" />
                     </div>
                 </div>
             </div>
@@ -121,32 +125,33 @@
                 </asp:Table>--%>
                 <table class="table">
                     <thead>
-                        <tr style="border:solid">
+                        <tr style="border: solid">
                             <th>D/C No</th>
                             <th>Disconnected Date</th>
                             <th>Reconnected Date</th>
                         </tr>
                     </thead>
-                    <%if (this.connectionLog != null) {
+                    <%if (this.connectionLog != null)
+                      {
                           int i = 0;
-                        foreach (var item in this.connectionLog)
-                      {%>
-                    <tr style="border:solid">
-                        
+                          foreach (var item in this.connectionLog)
+                          {%>
+                    <tr style="border: solid">
+
                         <td><%:i %></td>
                         <td><%: item.DisconnectedDate %></td>
                         <td><%: item.ReconnectedDate %></td>
                     </tr>
-                        
+
 
                     <%
-                          i++;
-                    } 
+                              i++;
+                          }
                       }%>
                 </table>
 
             </div>
-            
+
 
             <div class="modal fade" id="PaymentModal" role="dialog">
                 <div class="modal-dialog">
@@ -161,7 +166,7 @@
                                 <div class="form-group">
                                     <label for="AccountNo" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Account No:</label>
                                     <div class="col-sm-10">
-                                        <asp:TextBox ID="TextBoxPaymentDetailsAccountNo" runat="server" class="form-control" ReadOnly="true" Enabled="False"></asp:TextBox>
+                                        <asp:TextBox ID="TextBoxPaymentDetailsAccountNo" runat="server" class="form-control" ReadOnly="true" Enabled="False" onkeypress="return NumberOnly()"></asp:TextBox>
                                     </div>
                                 </div>
                             </div>
@@ -181,11 +186,20 @@
                                     <div class="col-sm-10">
                                         <asp:DropDownList ID="DListPaymentMethod" runat="server" Width="200px">
                                             <asp:ListItem Text="Select Payment Method" Value="0"></asp:ListItem>
-                                            <asp:ListItem Text="CEB Counter" Value="1"></asp:ListItem>
-                                            <asp:ListItem Text="Food City" Value="2"></asp:ListItem>
-                                            <asp:ListItem Text="Bank" Value="3"></asp:ListItem>
-                                            <asp:ListItem Text="Other" Value="4"></asp:ListItem>
+                                            <asp:ListItem Text="CEB Counter" Value="CEB Counter"></asp:ListItem>
+                                            <asp:ListItem Text="Food City" Value="Food City"></asp:ListItem>
+                                            <asp:ListItem Text="Bank" Value="Bank"></asp:ListItem>
+                                            <asp:ListItem Text="Other" Value="Other"></asp:ListItem>
                                         </asp:DropDownList>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label for="ContactNo" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Contact No:</label>
+                                    <div class="col-sm-10">
+                                        <asp:TextBox ID="TextBoxContactNo" runat="server" class="form-control" ReadOnly="false" Enabled="true" onkeypress="return NumberOnly()"></asp:TextBox>
                                     </div>
                                 </div>
                             </div>
@@ -197,9 +211,134 @@
                     </div>
                 </div>
             </div>
+
+            <div class="modal fade" id="NewAccountModal" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title">Add New Account</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="AccountNo" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Account No:</label>
+                                <div class="col-sm-10">
+                                    <asp:TextBox ID="TextBoxAccountNo" runat="server" class="form-control" ReadOnly="false" Enabled="true" onkeypress="return NumberOnly()"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="Name" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Name:</label>
+                                <div class="col-sm-5">
+                                    <asp:TextBox ID="TextBoxFName" runat="server" class="form-control" ReadOnly="false" Enabled="true" Text="First Name"></asp:TextBox>
+                                </div>
+                                <div class="col-sm-5">
+                                    <asp:TextBox ID="TextBoxLName" runat="server" class="form-control" ReadOnly="false" Enabled="true" Text="Last Name"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="PhoneNo" class="col-sm-2 control-label" style="padding-left: -3px; margin-top: 4px">Contact No:</label>
+                                <div class="col-sm-10">
+                                    <asp:TextBox ID="TextBoxPhoneNo" runat="server" class="form-control" ReadOnly="false" Enabled="true" Type="phone" style="margin-top:4px"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="AddressLine1" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Address Line1:</label>
+                                <div class="col-sm-10">
+                                    <asp:TextBox ID="TextBoxAddressLine1" runat="server" class="form-control" ReadOnly="false" Enabled="true"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="AddressLine2" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Address Line2:</label>
+                                <div class="col-sm-10">
+                                    <asp:TextBox ID="TextBoxAddressLine2" runat="server" class="form-control" ReadOnly="false" Enabled="true"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="AddressLine3" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Address Line3:</label>
+                                <div class="col-sm-10">
+                                    <asp:TextBox ID="TextBoxAddressLine3" runat="server" class="form-control" ReadOnly="false" Enabled="true"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="Walkorder" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Walk Order:</label>
+                                <div class="col-sm-3">
+                                    <asp:TextBox ID="TextBoxReaderCode" runat="server" class="form-control" ReadOnly="false" Enabled="true" Text="Reader Code"></asp:TextBox>
+                                </div>
+                                <div class="col-sm-3">
+                                    <asp:TextBox ID="TextBoxDPackNo" runat="server" class="form-control" ReadOnly="false" Enabled="true" Text="D Pack No"></asp:TextBox>
+                                </div>
+                                <div class="col-sm-4">
+                                    <asp:TextBox ID="TextBoxWalkSeq" runat="server" class="form-control" ReadOnly="false" Enabled="true" Text="Walk Seq"></asp:TextBox>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="Depot" class="col-sm-2 control-label" style="padding-left: -3px; padding-top: 0px">Depot:</label>
+                                <div class="col-sm-3">
+                                    <asp:DropDownList ID="DepotList" runat="server">
+                                        <asp:ListItem Text="Select Depot" Value="0"></asp:ListItem>
+                                        <asp:ListItem Text="Fullerton" Value="Fullerton"></asp:ListItem>
+                                        <asp:ListItem Text="Mathugama" Value="Mathugama"></asp:ListItem>
+                                        <asp:ListItem Text="Beruwala" Value="Beruwala"></asp:ListItem>
+                                        <asp:ListItem Text="Panadura" Value="Panadura"></asp:ListItem>
+                                        <asp:ListItem Text="Agalawatta" Value="Agalawatta"></asp:ListItem>
+                                    </asp:DropDownList>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <asp:Button ID="ButtonSave" class="btn btn-primary" runat="server" Text="Save" type="submit" OnClick="btnSave_Click" />
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
+<script type ="text/javascript">
+        function Openmodal() {
+            debugger
+            $('#PaymentModal').modal('show');
+            var AccounNo = document.getElementById('<%= TextBox1.ClientID %>').value;
+            //$('#TextBoxPaymentDetailsAccountNo').val('AccounNo');
+            document.getElementById('<%=TextBoxPaymentDetailsAccountNo.ClientID%>').value = AccounNo;
+
+        }
+ 
+
+    function Openmodalnewaccount() {
+        $('#NewAccountModal').modal('show');
+        var AccounNo = document.getElementById('<%= TextBox1.ClientID %>').value;
+    }
 
 
+</script>
+<script type ="text/javascript">
+    function NumberOnly()
+        {
+           var AsciiValue=event.keyCode
+            if((AsciiValue>=48 && AsciiValue<=57) || (AsciiValue==8 || AsciiValue==127))
+                event.returnValue=true;
+            else
+                event.returnValue=false;
+        }
+    </script>
 
 </asp:Content>

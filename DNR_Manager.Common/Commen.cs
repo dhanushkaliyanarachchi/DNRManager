@@ -10,7 +10,11 @@ namespace DNR_Manager.Common
     {
         
     }
- 
 
+    public enum UserType
+    {
+        Admin = 1,
+        CSR = 2
+    }
 
 }

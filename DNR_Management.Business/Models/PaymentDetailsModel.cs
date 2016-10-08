@@ -18,6 +18,8 @@ namespace DNR_Manager.Business.Models
         public string WalkSequence { get; set; }
         public string ReaderCode { get; set; }
         public string DailyPackNo { get; set; }
+        public string ContactNo { get; set; }
+        public int status { get; set; }
 
     }
 }

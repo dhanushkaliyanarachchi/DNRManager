@@ -139,27 +139,7 @@ namespace DNR_Manager.Data.Customer.Repositories
             return Loglist;
         }
 
-        //public void insertReconnectionDetails(string accNo, string ReconnectedDate, string ReconnectedBy,string PaymentMethod)
-        //{
-        //    int completeness = 0;
-        //    DateTime RDate = DateTime.Parse(ReconnectedDate);
-        //    string quaryforinsertReconnectionDetails = string.Format("INSERT INTO ConnectionLogs (AccountNo,ReconnectedDate,ReconnectedBy,PaymentDate,PaymentMode,Completness) Values ('{0}','{1}','{2}','{3}','{4}',{5})", accNo, RDate.ToString("yyyy-MM-dd HH:mm"), ReconnectedBy, PaymentMethod, completeness);
-        //    try
-        //    {
-        //        connection.Open();
-        //        command.CommandText = quaryforinsertReconnectionDetails;
-        //        command.ExecuteNonQuery();
-        //    }
-
-        //    catch(Exception ex){
-
-        //    }
-
-        //    finally
-        //    {
-
-        //    }
-        //}
+       
 
         public bool UpdateReconnection(string accontNo, string paymentDate, string reconnectedDate, string reconnectedBy, string paymentMethod)
         {
@@ -178,7 +158,7 @@ namespace DNR_Manager.Data.Customer.Repositories
 
                 if (reader.HasRows)
                 {
-                    queryUpdate = string.Format("UPDATE ConnectionLogs SET ReconnectedDate = '{0}', ReconnectedBy = '{1}', PaymentDate ='{2}', PaymentMode ='{3}', Completness = '1' WHERE AccountNo = '{4}'", reconnectedDate, reconnectedBy, PaymentDate.ToString("yyyy-MM-dd HH:mm:ss"), paymentMethod, accontNo);
+                    queryUpdate = string.Format("UPDATE ConnectionLogs SET ReconnectedDate = '{0}', ReconnectedBy = '{1}', PaymentDate ='{2}', PaymentMode ='{3}', Completness = '1',ThousandListStaus = '0' WHERE AccountNo = '{4}'", ReconnectedDate.ToString("yyyy-MM-dd HH:mm:ss"), reconnectedBy, PaymentDate.ToString("yyyy-MM-dd HH:mm:ss"), paymentMethod, accontNo);
 
                     try
                     {
@@ -186,15 +166,13 @@ namespace DNR_Manager.Data.Customer.Repositories
                         reader.Close();
                         //connection.Open();
                         affectedRows = command.ExecuteNonQuery();
-                        var deleteQuery = string.Format("DELETE FROM PaymentDetails WHERE AccountNo = '{0}'", accontNo);
+                        var deleteQuery = string.Format("DELETE FROM ReconnectionDetails WHERE AccountNo = '{0}'", accontNo);
                         if (affectedRows > 0)
                         {
                             command.CommandText = deleteQuery;
                             affectedRows = command.ExecuteNonQuery();
                             connection.Close();
                         }
-
-
                         //connection.Close();
                         return affectedRows > 0;
                     }
@@ -209,8 +187,8 @@ namespace DNR_Manager.Data.Customer.Repositories
                 }
                 else
                 {
-                    query = string.Format("INSERT INTO ConnectionLogs (AccountNo, ReconnectedDate, ReconnectedBy, PaymentDate, PaymentMode, Completness) VALUES('{0}','{1}','{2}','{3}', '{4}','{5}')", accontNo, reconnectedDate, reconnectedBy, PaymentDate.ToString("yyyy-MM-dd HH:mm:ss"), paymentMethod, false);
-                    var deleteQuery = string.Format("DELETE FROM PaymentDetails WHERE AccountNo = '{0}'", accontNo);
+                    query = string.Format("INSERT INTO ConnectionLogs (AccountNo, ReconnectedDate, ReconnectedBy, PaymentDate, PaymentMode, Completness,ThousandListStaus) VALUES('{0}','{1}','{2}','{3}', '{4}','{5}','{6}')", accontNo, ReconnectedDate.ToString("yyyy-MM-dd HH:mm:ss"), reconnectedBy, PaymentDate.ToString("yyyy-MM-dd HH:mm:ss"), paymentMethod, false, 0);
+                    var deleteQuery = string.Format("DELETE FROM ReconnectionDetails WHERE AccountNo = '{0}'", accontNo);
 
                     try
                     {
@@ -344,6 +322,8 @@ namespace DNR_Manager.Data.Customer.Repositories
                 command.CommandText = updateQuery;
                 connection.Open();
                 command.ExecuteNonQuery();
+
+
             }
 
             catch (Exception ex)
@@ -356,6 +336,267 @@ namespace DNR_Manager.Data.Customer.Repositories
                 connection.Close();
             }
         }
+
+        public void updateLetterSentdetails(string accNo, string letterID, string letterDate)
+        {
+            string updatequery = string.Format("UPDATE ConnectionLogs SET LetterId = '{0}',LetterSentDate = '{1}',LetterStatus = {2}, OrderCardStatus = {3} WHERE AccountNo = '{4}' AND LetterStatus = {5}", letterID, letterDate, 2, 0, accNo, 1);
+            string DeleteQuery = string.Format("DELETE FROM LettersToBesent WHERE AccountNo = '{0}'", accNo);
+            try
+            {
+                command.CommandText = updatequery;
+                connection.Open();
+                int i = command.ExecuteNonQuery();
+                if (i > 0)
+                {
+                    command.CommandText = DeleteQuery;
+                    command.ExecuteNonQuery();
+                }
+            }
+            catch(Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+        }
+
+        public List<ThousandList> getThousandList(string daylypackNo1,string daylypackNo2)
+        {
+            List<ThousandList> thousandlist = new List<ThousandList>();
+            string thousandQuery = string.Format("SELECT ConnectionLogs.AccountNo, ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq] FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No] WHERE  ConnectionLogs.ThousandListStaus = 0 AND ConsumerDetails.[Daily Pack No] BETWEEN {0} AND {1}", daylypackNo1, daylypackNo2);
+            try
+            {
+                command.CommandText = thousandQuery;
+                connection.Open();
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ThousandList newthousandList = new ThousandList();
+                    newthousandList.AccountNo = reader["AccountNo"] != DBNull.Value ? (string)reader["AccountNo"] : "";
+                    newthousandList.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newthousandList.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newthousandList.WalkSeq = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    thousandlist.Add(newthousandList);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return thousandlist;
+        }
+
+        public int updateThousandListDetails(string accNo, string BillCycle)
+        {
+            int affectedrows = 0;
+            string quaryUpdate = string.Format("UPDATE ConnectionLogs SET ThousandListStaus = 1, ThousandListDate = '{0}', BillRound = {1} WHERE AccountNo = '{2}' AND ThousandListStaus = {3}", DateTime.Today.ToString("yyyy-MM-dd"), BillCycle, accNo, 0);
+            command.CommandText = quaryUpdate;
+            try
+            {
+                connection.Open();
+                affectedrows = command.ExecuteNonQuery();
+                
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+            return affectedrows;
+        }
+
+        public void insertThousandList(string BillCycle)
+        {
+            DateTime Date = DateTime.Now;
+            string queryInsert = string.Format("INSERT INTO ThousandList (ListDate,BillCircle) VALUES ('{0}',{1})", Date.ToString("yyyy-MM-dd"), BillCycle);
+            command.CommandText = queryInsert;
+            try
+            {
+                connection.Open();
+                int affectedrows = command.ExecuteNonQuery();
+                
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            
+        }
+
+        public List<ThousandList> getSavedThousandList(string BillCircle, string Date)
+        {
+            List<ThousandList> thousandlist = new List<ThousandList>();
+            DateTime ListDate = Convert.ToDateTime(Date);
+            string thousandQuery = string.Format("SELECT ConnectionLogs.AccountNo, ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq] FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No] WHERE  ConnectionLogs.ThousandListStaus = 1 AND ConnectionLogs.BillRound = {0} AND ConnectionLogs.ThousandListDate = '{1}'", BillCircle, ListDate.ToString("yyyy-MM-dd HH:mm:ss"));
+            try
+            {
+                command.CommandText = thousandQuery;
+                connection.Open();
+                reader = command.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    ThousandList newthousandList = new ThousandList();
+                    newthousandList.AccountNo = reader["AccountNo"] != DBNull.Value ? (string)reader["AccountNo"] : "";
+                    newthousandList.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newthousandList.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newthousandList.WalkSeq = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    thousandlist.Add(newthousandList);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return thousandlist;
+        }
+
+        public List<OrderCardDetails> getOrderCardListDetails()
+        {
+            string getOrderCardQuery = string.Format("SELECT ConnectionLogs.AccountNo AS AccountNo, ConnectionLogs.LetterSentDate, ConnectionLogs.LetterId, ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConsumerDetails.[Cust Fname],  ConsumerDetails.[Cust Lname], ConsumerDetails.[Address 1], ConsumerDetails.[Address 2], ConsumerDetails.[Address 3], ConsumerDetails.Depot FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No] WHERE ConnectionLogs.LetterStatus = 2 AND ConnectionLogs.Completness = 0");
+            List<OrderCardDetails> OrdercardList = new List<OrderCardDetails>();
+            
+            try
+            {
+                command.CommandText = getOrderCardQuery;
+                connection.Open();
+                reader = command.ExecuteReader();
+
+                while(reader.Read()){
+                    OrderCardDetails newOrderCard = new OrderCardDetails();
+                    newOrderCard.AccountNo = reader["AccountNo"] != DBNull.Value ? (string)reader["AccountNo"] : "";
+                    newOrderCard.LetterSentDate = (DateTime)reader["LetterSentDate"];
+                    newOrderCard.LetterID = reader["LetterId"] != DBNull.Value ? (string)reader["LetterId"] : "";
+                    newOrderCard.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newOrderCard.DailypackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newOrderCard.WalkSeq = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newOrderCard.Fname = reader["Cust Fname"] != DBNull.Value ? (string)reader["Cust Fname"] : "";
+                    newOrderCard.Lname = reader["Cust Lname"] != DBNull.Value ? (string)reader["Cust Lname"] : "";
+                    newOrderCard.AddressLine1 = reader["Address 1"] != DBNull.Value ? (string)reader["Address 1"] : "";
+                    newOrderCard.AddressLine2 = reader["Address 2"] != DBNull.Value ? (string)reader["Address 2"] : "";
+                    newOrderCard.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 4"] : "";
+                    newOrderCard.Depot = reader["Depot"] != DBNull.Value ? (string)reader["Depot"] : "";
+                    OrdercardList.Add(newOrderCard);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return OrdercardList;
+        }
+
+        public int getnextOrderCardID(string Depot, string year)
+        {
+            string querytogetId = string.Format("SELECT OrderCardID FROM ConnectionLogs WHERE OrderCardID LIKE '{0}/MR/{1}/%'", Depot, year);
+            command.CommandText = querytogetId;
+            int Id = 0;
+            try
+            {
+                connection.Open();
+                reader = command.ExecuteReader();
+                ArrayList idList = new ArrayList();
+                if ((reader.HasRows) == true)
+                {
+                    while (reader.Read())
+                    {
+                        string OrderCardID = (string)reader["OrderCardID"];
+                        Id = Int32.Parse(OrderCardID.Substring(OrderCardID.Length - 4));
+                        idList.Add(Id);
+                    }
+                    int max = 0; //assumes + numbers
+                    int temp;
+                    foreach (int items in idList)
+                    {
+                        temp = items;
+                        if (max < temp)
+                        { max = temp; }
+                    }
+                    Id = max;
+                }
+
+                else if ((reader.HasRows) == false)
+                {
+                    Id = 0;
+                }
+            }
+
+            catch (Exception ex)
+            {
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return Id;
+        }
+
+        public void UpdateOrderCardStatus(string accNo)
+        {
+            string updateQuery = string.Format("UPDATE ConnectionLogs SET OrderCardStatus = '1' WHERE AccountNo ='{0}' AND Completness = '0' AND OrderCardStatus = '0'", accNo);
+            command.CommandText = updateQuery;
+            try
+            {
+                command.CommandText = updateQuery;
+                connection.Open();
+                command.ExecuteNonQuery();
+
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+        }
+
  
     }
 }

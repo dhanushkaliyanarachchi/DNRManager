@@ -4,21 +4,22 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DNR_Manager.Data.Customer
+namespace DNR_Manager.Business.Models
 {
-    public class PaymentDetails
+    public class OrderCardListModel
     {
         public string AccountNo { get; set; }
-        public DateTime PaymentDate { get; set; }
-        public string PaymentMethod { get; set; }
+        public string Fname { get; set; }
+        public string Lname { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string AddressLine3 { get; set; }
-        public string Depot { get; set; }
+        public string LetterID { get; set; }
+        public DateTime LetterSentDate { get; set; }
         public string ReaderCode { get; set; }
-        public string DailyPackNo { get; set; }
+        public string DailypackNo { get; set; }
         public string WalkSeq { get; set; }
-        public string ContactNo { get; set; }
-        public int status { get; set; }
+        public string Depot { get; set; }
+        public string OrderCardID { get; set; }
     }
 }
