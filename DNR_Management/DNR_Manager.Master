@@ -27,7 +27,7 @@
                         <li class="active"><a href="ECity.aspx">Home</a></li>
                         <li><a href="PaymentList.aspx">Payments</a></li>
                         <li><a href="DetailChecker.aspx">D&R Details</a></li>
-                        <li><a href="#" runat="server">Connection</a></li>
+                        <li><a href="Reports.aspx" runat="server">Reports</a></li>
                     </ul>`
 <%--                    <ul class="nav navbar-nav navbar-right">
                         <li><a href="#" onclick ="OpenLoginmodal()">Login</a>

@@ -109,11 +109,16 @@ namespace DNR_Manager.Data.Customer.Repositories
             {
 
             }
+
+            finally
+            {
+                connection.Close();
+            }
         }
 
         public List<ConnectionLog> GetConnectionLog(string accNo)
         {
-            string connectionLogquery = string.Format("SELECT DisconnectedDate,ReconnectedDate FROM ConnectionLogs WHERE Completness = 1 AND AccountNo = '{0}'",accNo);
+            string connectionLogquery = string.Format("SELECT DisconnectedDate,ReconnectedDate,OrderCardDate,MeterRemovedDate,FinalizedDate FROM ConnectionLogs WHERE AccountNo = '{0}' ORDER BY DisconnectedDate ASC", accNo);
             List<ConnectionLog> Loglist = new List<ConnectionLog>();
             try
             {
@@ -124,6 +129,9 @@ namespace DNR_Manager.Data.Customer.Repositories
                     ConnectionLog newConnectionLogListItem = new ConnectionLog();
                     newConnectionLogListItem.DisconnectedDate = reader["DisconnectedDate"] != DBNull.Value ? (DateTime)reader["DisconnectedDate"] : DateTime.MinValue;
                     newConnectionLogListItem.ReconnectedDate =  reader["ReconnectedDate"] != DBNull.Value ? (DateTime)reader["ReconnectedDate"] : DateTime.MinValue;
+                    newConnectionLogListItem.OrderCardDate = reader["OrderCardDate"] != DBNull.Value ? (DateTime)reader["OrderCardDate"] : DateTime.MinValue;
+                    newConnectionLogListItem.MeterRemovedDate = reader["MeterRemovedDate"] != DBNull.Value ? (DateTime)reader["MeterRemovedDate"] : DateTime.MinValue;
+                    newConnectionLogListItem.FinalizedDate = reader["FinalizedDate"] != DBNull.Value ? (DateTime)reader["FinalizedDate"] : DateTime.MinValue;
                     Loglist.Add(newConnectionLogListItem);
                 }   
             }
@@ -155,34 +163,47 @@ namespace DNR_Manager.Data.Customer.Repositories
                 connection.Open();
                 reader = command.ExecuteReader();
                 //connection.Close();
-
+                ConnectionLog newLog = new ConnectionLog();
                 if (reader.HasRows)
                 {
-                    queryUpdate = string.Format("UPDATE ConnectionLogs SET ReconnectedDate = '{0}', ReconnectedBy = '{1}', PaymentDate ='{2}', PaymentMode ='{3}', Completness = '1',ThousandListStaus = '0' WHERE AccountNo = '{4}'", ReconnectedDate.ToString("yyyy-MM-dd HH:mm:ss"), reconnectedBy, PaymentDate.ToString("yyyy-MM-dd HH:mm:ss"), paymentMethod, accontNo);
-
-                    try
+                    while (reader.Read())
                     {
-                        command.CommandText = queryUpdate;
-                        reader.Close();
-                        //connection.Open();
-                        affectedRows = command.ExecuteNonQuery();
-                        var deleteQuery = string.Format("DELETE FROM ReconnectionDetails WHERE AccountNo = '{0}'", accontNo);
-                        if (affectedRows > 0)
+                        newLog.DisconnectedBy = reader["DisconnectedBy"] != DBNull.Value ? (string)reader["DisconnectedBy"] : "";
+                    }
+
+                    if (newLog.DisconnectedBy != "")
+                    {
+                        queryUpdate = string.Format("UPDATE ConnectionLogs SET ReconnectedDate = '{0}', ReconnectedBy = '{1}', PaymentDate ='{2}', PaymentMode ='{3}', Completness = '1',ThousandListStaus = '0' WHERE AccountNo = '{4}'", ReconnectedDate.ToString("yyyy-MM-dd HH:mm:ss"), reconnectedBy, PaymentDate.ToString("yyyy-MM-dd HH:mm:ss"), paymentMethod, accontNo);
+
+                        try
                         {
-                            command.CommandText = deleteQuery;
+                            command.CommandText = queryUpdate;
+                            reader.Close();
+                            //connection.Open();
                             affectedRows = command.ExecuteNonQuery();
+                            var deleteQuery = string.Format("DELETE FROM ReconnectionDetails WHERE AccountNo = '{0}'", accontNo);
+                            if (affectedRows > 0)
+                            {
+                                command.CommandText = deleteQuery;
+                                affectedRows = command.ExecuteNonQuery();
+                                connection.Close();
+                            }
+                            //connection.Close();
+                            return affectedRows > 0;
+                        }
+                        catch (Exception e)
+                        {
+
+                        }
+                        finally
+                        {
                             connection.Close();
                         }
-                        //connection.Close();
-                        return affectedRows > 0;
                     }
-                    catch (Exception e)
-                    {
 
-                    }
-                    finally
+                    else
                     {
-                        connection.Close();
+                        return false;
                     }
                 }
                 else
@@ -506,7 +527,7 @@ namespace DNR_Manager.Data.Customer.Repositories
                     newOrderCard.Lname = reader["Cust Lname"] != DBNull.Value ? (string)reader["Cust Lname"] : "";
                     newOrderCard.AddressLine1 = reader["Address 1"] != DBNull.Value ? (string)reader["Address 1"] : "";
                     newOrderCard.AddressLine2 = reader["Address 2"] != DBNull.Value ? (string)reader["Address 2"] : "";
-                    newOrderCard.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 4"] : "";
+                    newOrderCard.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 3"] : "";
                     newOrderCard.Depot = reader["Depot"] != DBNull.Value ? (string)reader["Depot"] : "";
                     OrdercardList.Add(newOrderCard);
                 }
@@ -597,6 +618,472 @@ namespace DNR_Manager.Data.Customer.Repositories
             }
         }
 
- 
+        public void CancellOrderCard(string accNo)
+        {
+            DateTime Rdate = DateTime.MinValue;
+            int affectedRows = 0;
+            int deletedRows = 0;
+            string CancellOrderCardQuery = string.Format("UPDATE ConnectionLogs SET ThousandListStaus = '0', Completness = '1', ReconnectedDate = {0} WHERE AccountNo = '{1}' AND Completness = '0' AND OrderCardStatus = '1'", Rdate.ToString("yyyy-MM-dd"), accNo);
+            string DeleteOrderCard = string.Format("DELETE FROM OrderCardList WHERE AccountNo = '{0}'", accNo);
+            string querytoUpdateconnection = string.Format("UPDATE Connections SET connectionStatus = '1' WHERE AccountNo = '{0}'", accNo);
+            try
+            {
+                command.CommandText = CancellOrderCardQuery;
+                connection.Open();
+                affectedRows = command.ExecuteNonQuery();
+                if (affectedRows > 0)
+                {
+                    command.CommandText = DeleteOrderCard;
+                    deletedRows = command.ExecuteNonQuery();
+                    if (deletedRows > 0)
+                    {
+                        command.CommandText = querytoUpdateconnection;
+                        command.ExecuteNonQuery();
+                    }
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+            
+        }
+
+        public int UpdateOrderCardDetails(string accNo, string OrerCardID)
+        {
+            int affectedRows = 0;
+            int DeletedRows = 0;
+            DateTime OrderCardDate = DateTime.Today;
+            string updateOrderCardDetails = string.Format("UPDATE ConnectionLogs SET OrderCardDate = {0}, OrderCardID = '{1}', OrderCardStatus = 2, MeterRemovedStatus = 0 WHERE Completness = 0 AND AccountNo = '{2}' AND OrderCardStatus = 1", OrderCardDate.ToString("yyyy-MM-dd"), OrerCardID, accNo);
+            string DeleteOrderCard = string.Format("DELETE FROM OrderCardList WHERE AccountNo = '{0}'", accNo);
+            try
+            {
+                command.CommandText = updateOrderCardDetails;
+                connection.Open();
+                affectedRows = command.ExecuteNonQuery();
+                if (affectedRows > 0)
+                {
+                    command.CommandText = DeleteOrderCard;
+                    DeletedRows = command.ExecuteNonQuery();
+                }
+
+            }
+            catch (Exception EX)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return DeletedRows;
+        }
+
+
+        public MeterRemovedDate getOdercardDetailsForMeterRemoved(string accNo)
+        {
+            //8 is assigned as the value of cells which are contained null values. 
+            MeterRemovedDate newMeterRemoveDetail = new MeterRemovedDate();
+            string getDetailsForOrderCardQuery = string.Format("SELECT ConnectionLogs.LetterStatus, ConnectionLogs.OrderCardStatus, ConnectionLogs.MeterRemovedStatus FROM ConnectionLogs WHERE ConnectionLogs.Completness = 0 AND ConnectionLogs.AccountNo = '{0}'", accNo);
+            try
+            {
+                command.CommandText = getDetailsForOrderCardQuery;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while(reader.Read()){
+                    newMeterRemoveDetail.LetterStatus = reader["LetterStatus"] != DBNull.Value ? (int)reader["LetterStatus"] : 8;
+                    newMeterRemoveDetail.MeterRemovedStatus = reader["MeterRemovedStatus"] != DBNull.Value ? (int)reader["MeterRemovedStatus"] : 8;
+                    newMeterRemoveDetail.OrderCardStatus = reader["OrderCardStatus"] != DBNull.Value ? (int)reader["OrderCardStatus"] : 8;
+                } 
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newMeterRemoveDetail;
+        }
+
+        public int UpdateMeterRemoveDate(string accNo, string date)
+        {
+            int affectedrows = 0;
+            string UpdateQuery = string.Format("UPDATE ConnectionLogs SET MeterRemovedDate = '{0}',MeterRemovedStatus = 1 WHERE ConnectionLogs.AccountNo = '{1}' AND ConnectionLogs.Completness = 0 AND ConnectionLogs.OrderCardStatus = 2 AND ConnectionLogs.MeterRemovedStatus = 0", date, accNo);
+            try
+            {
+                connection.Open();
+                command.CommandText = UpdateQuery;
+                affectedrows = command.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return affectedrows;
+        }
+
+        public List<MeterRemovedAccounDetails> getMeterRemovedDetails()
+        {
+            List<MeterRemovedAccounDetails> RemovedMeterList = new List<MeterRemovedAccounDetails>();
+            string AccountDetailsToBeFinalized = string.Format("SELECT AccountNo, OrderCardDate, MeterRemovedDate,LetterSentDate FROM ConnectionLogs WHERE MeterRemovedStatus = 1 AND OrderCardStatus = 2 AND Completness = 0");
+            try
+            {
+                connection.Open();
+                command.CommandText = AccountDetailsToBeFinalized;
+                reader = command.ExecuteReader();
+                while(reader.Read())
+                {
+                    var MeterRemovedAccount = new MeterRemovedAccounDetails();
+                    MeterRemovedAccount.AccountNo = reader["AccountNo"] != DBNull.Value ? (string)reader["AccountNo"] : "";
+                    MeterRemovedAccount.LetterSentDate = reader["LetterSentDate"] != DBNull.Value ? (DateTime)reader["LetterSentDate"] : DateTime.MinValue;
+                    MeterRemovedAccount.OrderCardDate = reader["OrderCardDate"] != DBNull.Value ? (DateTime)reader["OrderCardDate"] : DateTime.MinValue;
+                    MeterRemovedAccount.MeterRemovedDate = reader["MeterRemovedDate"] != DBNull.Value ? (DateTime)reader["MeterRemovedDate"] : DateTime.MinValue;
+                    RemovedMeterList.Add(MeterRemovedAccount);
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return RemovedMeterList;
+        }
+
+        public int updateFinalizedDate(string accountNo, string FinalizedDate)
+        {
+            int affectedRows = 0;
+            string updateQuery = string.Format("UPDATE ConnectionLogs SET MeterRemovedStatus = 2, FinalizedDate = '{0}' WHERE AccountNo = '{1}' AND OrderCardStatus = 2 AND MeterRemovedStatus = 1", FinalizedDate, accountNo);
+            try
+            {
+                command.CommandText = updateQuery;
+                connection.Open();
+                affectedRows = command.ExecuteNonQuery(); 
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+            finally
+            {
+                connection.Close();
+            }
+
+            return affectedRows;
+        }
+
+        public int ActivateAccoount(string accountNo,string ReactiveDate)
+        {
+            int affectedRows = 0;
+            int affectedConstatusRows = 0;
+            string ReactivateAccountQuery = string.Format("UPDATE ConnectionLogs SET Completness = 1, ReconnectedDate ={0} WHERE AccountNo = '{1}' AND Completness = 0 AND MeterRemovedStatus = 2", ReactiveDate, accountNo);
+            string updateConStatusQuery = string.Format("UPDATE Connections SET connectionStatus = 1 WHERE AccountNo = '{0}'", accountNo);
+            try
+            {
+                connection.Open();
+                command.CommandText = ReactivateAccountQuery;
+                affectedRows = command.ExecuteNonQuery();
+
+                if (affectedRows > 0)
+                {
+                    command.CommandText  = updateConStatusQuery;
+                    affectedConstatusRows = command.ExecuteNonQuery();
+                }
+            }
+
+            catch(Exception ex){
+
+            }
+
+            finally
+            {
+                connection.Close();
+            }
+
+            return affectedConstatusRows;
+        }
+
+        public double getTimeSpanBetweenReconnections(string accountNo, DateTime ReconDate) 
+        {
+            DateTime reconDate = DateTime.MinValue;
+            string selectQuery = string.Format("SELECT TOP (1) ReconnectedDate FROM ConnectionLogs WHERE AccountNo = '{0}' ORDER BY ReconnectedDate DESC", accountNo);
+            try
+            {
+                command.CommandText = selectQuery;
+                connection.Open();
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    reader.Close();
+                    command.CommandText = selectQuery;
+                    reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        reconDate = reader["ReconnectedDate"] != DBNull.Value ? (DateTime)reader["ReconnectedDate"] : DateTime.MinValue;
+                    }
+                }
+
+                else
+                {
+                    reconDate = DateTime.MinValue;
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                connection.Close();
+                reader.Close();
+            }
+
+            DateTime t1 = ReconDate;
+            DateTime t2 = reconDate;
+            TimeSpan time = t1 - t2;
+            double ti = time.TotalDays;
+            return ti;
+        }
+
+        public int getDisconnectionCount(string FromDate, string ToDate)
+        {
+            string DisconnectionCount = string.Format("SELECT * FROM ConnectionLogs WHERE DisconnectedDate >= CONVERT(datetime,'{0}') and DisconnectedDate<= CONVERT(datetime,'{1}')", FromDate, ToDate);
+            int count = 0;
+            try
+            {
+                
+                connection.Open();
+                command.CommandText = DisconnectionCount;
+                reader = command.ExecuteReader();
+                if(reader.HasRows){
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+                
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int getDisconnectionNotYetReconnectedCount(string FromDate, string ToDate)
+        {
+            string DisconnectionNotYetReconnectedCount = string.Format("SELECT * FROM ConnectionLogs WHERE DisconnectedDate >= CONVERT(datetime,'{0}') and DisconnectedDate<= CONVERT(datetime,'{1}') AND Completness = 0 AND ReconnectedDate IS NULL", FromDate, ToDate);
+            int count = 0;
+            try
+            {
+
+                connection.Open();
+                command.CommandText = DisconnectionNotYetReconnectedCount;
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int getReconnectionCount(string FromDate, string ToDate)
+        {
+            string ReconnectionCount = string.Format("SELECT * FROM ConnectionLogs WHERE ReconnectedDate >= CONVERT(datetime,'{0}') and ReconnectedDate<= CONVERT(datetime,'{1}')", FromDate, ToDate);
+            int count = 0;
+            try
+            {
+
+                connection.Open();
+                command.CommandText = ReconnectionCount;
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int getOrderCardCount(string FromDate, string ToDate)
+        {
+            string OrderCardCount = string.Format("SELECT * FROM ConnectionLogs WHERE OrderCardDate >= CONVERT(datetime,'{0}') and OrderCardDate<= CONVERT(datetime,'{1}')", FromDate, ToDate);
+            int count = 0;
+            try
+            {
+
+                connection.Open();
+                command.CommandText = OrderCardCount;
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int getMeterRemovalCount(string FromDate, string ToDate)
+        {
+            string MeterRemovalCount = string.Format("SELECT * FROM ConnectionLogs WHERE MeterRemovedDate >= CONVERT(datetime,'{0}') and MeterRemovedDate<= CONVERT(datetime,'{1}')", FromDate, ToDate);
+            int count = 0;
+            try
+            {
+
+                connection.Open();
+                command.CommandText = MeterRemovalCount;
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return count;
+        }
+
+        public int getFinalizedAccountCount(string FromDate, string ToDate)
+        {
+            string FinalizedAccountCount = string.Format("SELECT * FROM ConnectionLogs WHERE FinalizedDate >= CONVERT(datetime,'{0}') and FinalizedDate<= CONVERT(datetime,'{1}')", FromDate, ToDate);
+            int count = 0;
+            try
+            {
+
+                connection.Open();
+                command.CommandText = FinalizedAccountCount;
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        count++;
+                    }
+                }
+
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return count;
+        }
+
+        public CountReport getCountReportToUI(string FromDate, string ToDate)
+        {
+            var newCountReport = new CountReport()
+            {
+            DisconnectionCount = getDisconnectionCount(FromDate, ToDate),
+            DisconnectionNotYetReconnectCount = getDisconnectionNotYetReconnectedCount(FromDate, ToDate),
+            ReconnectionCount = getReconnectionCount(FromDate, ToDate),
+            OrderCardCount = getOrderCardCount(FromDate, ToDate),
+            MeterRemovalCount = getMeterRemovalCount(FromDate, ToDate),
+            FinalizedAccountCount = getFinalizedAccountCount(FromDate, ToDate)
+        };
+            return newCountReport;
+        }
     }
 }

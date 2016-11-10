@@ -7,8 +7,6 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using System.Web.Script.Services;
-using System.Web.Services;
 
 namespace DNR_Manager.Web
 {
@@ -90,7 +88,6 @@ namespace DNR_Manager.Web
                             Label DynamicLable = new Label();
                             DynamicLable.Text = "*Disconnection Details Should Be Entered";
                             divLable.Controls.Add(DynamicLable);
-                            TextBoxStaus.Text = "Disconnected";
                         }
 
                     }
@@ -244,8 +241,8 @@ namespace DNR_Manager.Web
                     if (DListPaymentMethod.Text != "0")
                     {
                         ConnectionService newService = new ConnectionService();
-                        int reconstatus = newService.CheckForPaymentDetails(accNo);
-                        if (reconstatus == 0)
+                        bool reconstatus = newService.CheckForPaymentDetails(accNo);
+                        if (reconstatus == false)
                         {
                             DateTime Date = DateTime.Parse(TextBoxPaymentDate.Text);
                             string Pmethod = DListPaymentMethod.Text;
@@ -339,27 +336,6 @@ namespace DNR_Manager.Web
             {
                 ClientScript.RegisterStartupScript(GetType(), "hwa", "alert('You have already enterd details related to this account Number');", true);
             }
-        }
-        [WebMethod]
-        [ScriptMethod(UseHttpGet = false)]
-        public static bool UpdatePaymentOntesponse(string accNo, string paymentDate, string PaymentMet, string contactNo) 
-        {
-            bool updateStatus = false;
-            ConnectionService newService = new ConnectionService();
-            DateTime Date = DateTime.Parse(paymentDate);
-            bool updatestatus = newService.setPaymentDetail(accNo, PaymentMet, Date, contactNo);
-            if (updatestatus == true)
-            {
-                newService.setConnectionStatus(accNo, 0);
-                updateStatus = true;
-            }
-
-            else
-            {
-                updateStatus = false;
-            }
-
-            return updateStatus;
         }
 
        

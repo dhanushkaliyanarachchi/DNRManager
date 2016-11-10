@@ -43,7 +43,9 @@ namespace DNR_Manager.Business
                 DisconectedDate = connectionLog.DisconnectedDate,
                 Status = connectionStatus.connectionStatus,
                 FirstName = account.FirstName,
-                SecondName = account.SecondName
+                SecondName = account.SecondName,
+                OrderCardStatus = connectionLog.OrderCardStatus,
+                MeterRemovedStatus = connectionLog.MeterRemovedStatus
             };
 
             return connectionModel;
@@ -122,7 +124,7 @@ namespace DNR_Manager.Business
             var newLogModel = new List<ConnectionLogModel>();
             foreach (var item in log)
             {
-                newLogModel.Add(new ConnectionLogModel {DisconnectedDate = item.DisconnectedDate, ReconnectedDate = item.ReconnectedDate });
+                newLogModel.Add(new ConnectionLogModel {DisconnectedDate = item.DisconnectedDate, ReconnectedDate = item.ReconnectedDate, OrderCardDate = item.OrderCardDate, MeterRemovedDate = item.MeterRemovedDate, FinalizedDate =item.FinalizedDate });
             }
 
             return newLogModel;
@@ -327,6 +329,93 @@ namespace DNR_Manager.Business
             }
 
             return newOrderCardDetailModel;
+        }
+
+        public void CancelOrderCard(string accNo)
+        {
+            _connectionLogRepository.CancellOrderCard(accNo);
+        }
+
+        public int UpdateOrderCard(string accNo, string OrerCardID)
+        {
+            return _connectionLogRepository.UpdateOrderCardDetails(accNo, OrerCardID);
+        }
+
+        public MeterRemoveDetailsModel getMeterRemoveDetails(string accNo)
+        {
+            var meterRemoveDetails = _connectionLogRepository.getOdercardDetailsForMeterRemoved(accNo);
+            var accountDetails = _connectionRepository.GetConsumerAccount(accNo);
+            var conStatus = _connectionRepository.GetConnectionStatus(accNo);
+            var availability = _connectionRepository.CheckAvailabilityofConsumerDetails(accNo);
+
+            MeterRemoveDetailsModel newModel = new MeterRemoveDetailsModel();
+            newModel.availability = availability;
+            newModel.ReaderCode = accountDetails.ReaderCode;
+            newModel.DailyPackNo = accountDetails.DailypackNo;
+            newModel.WalkSeq = accountDetails.WalkSeq;
+            newModel.Address1 = accountDetails.AddressLine1;
+            newModel.Address2 = accountDetails.AddressLine2;
+            newModel.Address3 = accountDetails.AddressLine3;
+            newModel.LetterStatus = meterRemoveDetails.LetterStatus;
+            newModel.MeterRemovedStatus = meterRemoveDetails.MeterRemovedStatus;
+            newModel.OrderCardStatus = meterRemoveDetails.OrderCardStatus;
+            newModel.connectionStats = conStatus.connectionStatus;
+
+            return newModel;
+        }
+
+        public int UpdateMeterRemovedDate(string accNo, string Date)
+        {
+            return _connectionLogRepository.UpdateMeterRemoveDate(accNo,Date);
+        }
+
+        public List<MeterRemovedAccounListModel> getRemovedMeterList()
+        {
+            var meterLIst = _connectionLogRepository.getMeterRemovedDetails();
+            var newAccountListModel = new List<MeterRemovedAccounListModel>();
+            foreach (var item in meterLIst)
+            {
+                newAccountListModel.Add(new MeterRemovedAccounListModel {AccountNo =item.AccountNo, LetterSentDate = item.LetterSentDate, MeterRemovedDate = item.MeterRemovedDate, OrderCardDate = item.OrderCardDate });
+            }
+
+            return newAccountListModel;
+        }
+
+        public int UpdateFinalizedDate(string accNo, string FDate) 
+        {
+            return _connectionLogRepository.updateFinalizedDate(accNo, FDate);
+        
+        }
+
+        public int UpdateReactivation(string accNo, string reactiveDate)
+        {
+            return _connectionLogRepository.ActivateAccoount(accNo, reactiveDate);
+        }
+
+        public double getTimeSpanBetweenReconnections(string accNo, DateTime Date)
+        {
+            return _connectionLogRepository.getTimeSpanBetweenReconnections(accNo, Date);
+        }
+
+        public int CheckForPaymentDetails(string accNo)
+        {
+            return _connectionRepository.CheckForPaymentDetails(accNo);
+        }
+
+        public CountReportModal getCountModalToUI(string FromDate, string ToDate)
+        {
+            var CountReport = _connectionLogRepository.getCountReportToUI(FromDate,ToDate);
+            var newCountReportModel = new CountReportModal() 
+            { 
+                DisconnectionCount = CountReport.DisconnectionCount,
+                ReconnectionCount = CountReport.ReconnectionCount,
+                DisconnectionNotYetReconnectCount = CountReport.DisconnectionNotYetReconnectCount,
+                OrderCardCount = CountReport.OrderCardCount,
+                MeterRemovalCount = CountReport.MeterRemovalCount,
+                FinalizedAccountCount = CountReport.FinalizedAccountCount
+            };
+
+            return newCountReportModel;
         }
     }
 }

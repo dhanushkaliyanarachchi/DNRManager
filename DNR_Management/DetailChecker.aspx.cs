@@ -10,6 +10,7 @@ using System.Web.Script.Services;
 using System.Web.Services;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using DNR_Manager.Models;
 
 namespace DNR_Manager
 {
@@ -21,6 +22,7 @@ namespace DNR_Manager
         public List<ThousandListDateModel> ThousandDates;
         public List<ContractorListModel> contractorListModal;
         public List<OrderCardListModel> OrderCardList;
+        public List<MeterRemovedAccounListModel> RemovedMeterList;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (Session["User_Id"] == null)
@@ -34,6 +36,7 @@ namespace DNR_Manager
             letterDetailModel = connectionService.getLetterDetailstoTable();
             ThousandDates = connectionService.getThousandListDates();
             OrderCardList = connectionService.getOrderCardDetailstoUI();
+            RemovedMeterList = connectionService.getRemovedMeterList();
             if (!IsPostBack)
             {
                 contractorListModal = connectionService.getContractorListToUI();
@@ -341,6 +344,54 @@ namespace DNR_Manager
         [ScriptMethod(UseHttpGet = false)]
         public static void RemoveOrderCard(string accountNo)
         {
+            connectionService = new ConnectionService();
+            connectionService.CancelOrderCard(accountNo);
         }
+
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = false)]
+        public static void UpdateOrdercardDetails(List<OrderCardModel> rows)
+        {
+            connectionService = new ConnectionService();
+            foreach(var items in rows){
+                connectionService.UpdateOrderCard(items.AccountNo, items.OrderCardID);
+            }
+        }
+
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = false)]
+        public static MeterRemoveDetailsModel UpdateMeterRemoveDetails(string accountNo)
+        {
+            connectionService = new ConnectionService();
+            var MeterRemoveDetailModel = connectionService.getMeterRemoveDetails(accountNo);
+            return MeterRemoveDetailModel;
+        }
+
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = false)]
+        public static int UpdateMeterRemoveDate(string accountNo, string MRDate)
+        {
+            connectionService = new ConnectionService();
+            int response = connectionService.UpdateMeterRemovedDate(accountNo, MRDate);
+            return response;
+        }
+
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = false)]
+        public static int UpdateFinalizedDate(string accountNo, string finalizedDate)
+        {
+            connectionService = new ConnectionService();
+            int response = connectionService.UpdateFinalizedDate(accountNo, finalizedDate);
+            return response;
+        }
+
+        [WebMethod]
+        [ScriptMethod(UseHttpGet = false)]
+        public static int UpdateReactivation(string accountNo, string RconnectedDate)
+        {
+            connectionService = new ConnectionService();
+            return connectionService.UpdateReactivation(accountNo, RconnectedDate);
+        }
+
     }
 }

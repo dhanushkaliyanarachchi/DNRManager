@@ -14,6 +14,9 @@ namespace DNR_Manager.Business.Models
         public DateTime ReconnectedDate { get; set; }
         public string ReconnectedBy { get; set; }
         public string DisconnectedBy { get; set; }
+        public DateTime OrderCardDate { get; set; }
+        public DateTime MeterRemovedDate { get; set; }
+        public DateTime FinalizedDate { get; set; }
 
     }
 }

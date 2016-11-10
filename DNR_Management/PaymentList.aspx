@@ -35,7 +35,7 @@
             <div class="col-sm-12">
                 <div class="row">
                     <div class="row">
-                        <ul class="nav nav-tabs" style="margin-left: 30px">
+                        <ul class="nav nav-tabs" style="margin-left: 30px" id ="SelectTab">
                             <li class="active"><a data-toggle="tab" href="#PaymentDetails">Payment Details</a></li>
                             <li><a data-toggle="tab" href="#ReconnectionRecords">Reconnection Records</a></li>
                         </ul>
@@ -47,7 +47,7 @@
                                 <div class="col-xs-1">
                                     <!-- required for floating -->
                                     <!-- Nav tabs -->
-                                    <ul class="nav nav-tabs tabs-left sideways">
+                                    <ul class="nav nav-tabs tabs-left sideways" data-options="deep_linking: true">
                                         <li class="active " style="width: 95px"><a href="#Fullerton" data-toggle="tab">Fullerton</a></li>
                                         <li class="but tab3" style="width: 95px"><a href="#Mathugama" data-toggle="tab">Mathugama</a></li>
                                         <li class="but tab3" style="width: 95px"><a href="#Beruwala" data-toggle="tab">Beruwala</a></li>
@@ -739,11 +739,11 @@
                                             </div>
                                             <div class ="row">
                                                 <input type="button" class = "btn btn-primary" id ="btn-Excell-Beruwala" value ="Download Excel"  style ="margin-left: 70px"/>
-                                                <input type="button" class = "btn btn-primary" id ="btn-Save-Beruwala" value ="Save"  style ="margin-left: 70px; display:none"/>
+                                                <input type="button" class = "btn btn-primary" id ="btn-Save-Beruwala" data-table="table_BeruwalaExcel" value ="Save"  style ="margin-left: 70px; display:none"/>
                                             </div>
                                         </div>
 
-                                        <div class="tab-pane" id="PanaduraExcell">
+                                        <div class="tab-pane" id="PanaduraExcel">
                                             <div class="row">
                                                 <table id="table_PanaduraExcell" class="table">
                                                     <thead>
@@ -993,8 +993,10 @@
             });
         }
         function OnSuccess(response) {
-            alert(response.d);
+            window.location = 'PaymentList.aspx';
         }
+
+
     </script>
 
     <script type="text/javascript">
@@ -1095,7 +1097,6 @@
             //row.ChangeType = tableRow.find('td:eq(1)').text();
             //row.UpdateType = tableRow.find('td:eq(2)').text();
             //row.Part = tableRow.find('td:eq(5)').text();
-
             row.AccountNo = tableRow.find('td:eq(0)').text();
             row.Address = tableRow.find('td:eq(1)').text();
             row.WalkOrder = tableRow.find('td:eq(2)').text();
@@ -1104,7 +1105,6 @@
             row.PaymentMode = tableRow.find('td:eq(5)').text();
             row.ReconnectedDate = tableRow.find('td:eq(6)').text();
             row.ReconectedBy = tableRow.find('td:eq(7)').text();
-
 
             return row;
         }
@@ -1121,7 +1121,8 @@
                 return dataRows;
             }
 
-            function PostTable(table) {
+        function PostTable(table) {
+            debugger;
                     //var crossId = getParameterByName('id');
                 var jsonRequest = { rows: GetAllRows(table) };
 
@@ -1132,16 +1133,20 @@
                         contentType: 'application/json; charset=utf-8',
                         dataType: 'json',
                         async: false,
-                        success: function (data, text) {
-                            return true;
-                        },
+                        success: ChangeActivTab , 
+                        
                         error: function (request, status, error) {
                             return false;
                         }
                         });
             }
 
-
+            function ChangeActivTab(response) {
+                debugger
+                window.location = 'PaymentList.aspx';
+                e.preventDefault();
+                $('#SelectTab a[href="#ReconnectionRecords"]').tab('show');
+            }
         
     </script>
 

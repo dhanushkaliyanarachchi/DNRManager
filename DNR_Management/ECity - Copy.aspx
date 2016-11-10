@@ -404,46 +404,12 @@ outline: none;
                 var contactNo = document.getElementById("ContentPlaceHolder1_TextBoxContactNo").value;
                 var paymentDate = document.getElementById("ContentPlaceHolder1_TextBoxPaymentDate").value;
                 var PaymentMet = document.getElementById("ContentPlaceHolder1_DListPaymentMethod").value;
-                insertPaymentDetailsToReconnection(acc, paymentDate, PaymentMet, contactNo);
+
                 
             } else {
                 alert("You pressed Cancel!");
             }
         }
-
-        function insertPaymentDetailsToReconnection(accNo, paymentDate, PaymentMet, contactNo)
-        {
-            paymentDetailModel = {
-                accNo: accNo,
-                paymentDate: paymentDate,
-                PaymentMet: PaymentMet,
-                contactNo: contactNo
-            }
-
-            $.ajax({
-                type: "POST",
-                url: "ECity.aspx/UpdatePaymentOntesponse",
-                data: JSON.stringify(paymentDetailModel),
-                contentType: "application/json",
-                dataType: "json",
-                success: OnSuccess,
-                failure: function (response) {
-                    alert(response.d);
-                }
-            });
-
-        }
-
-        function OnSuccess(response)
-        {
-            if (response.d == true) {
-                alert('Databse is Updated');
-            }
-            else {
-                alert('database is not updated');
-            }
-        }
-
 </script>
 
 </asp:Content>

@@ -55,11 +55,11 @@ $(function(){
 
 	$("#export_excel_OrderCard_button").click(function () {
 	    debugger;
-	    $("#table_OrerCardList").btechco_excelexport({
-	        containerid: "table_OrerCardList"
+	    $("#table_OrderCardList").btechco_excelexport({
+	        containerid: "table_OrderCardList"
             , datatype: $datatype.Table
 	    });
-	    $('#btn_OrderCard_remove').show();
+	    $('#btn_OrderCard_Save').show();
 	});
 	
 	});

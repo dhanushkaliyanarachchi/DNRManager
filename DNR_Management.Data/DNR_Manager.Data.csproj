@@ -46,10 +46,13 @@
     <Compile Include="Customer\ConnectionLog.cs" />
     <Compile Include="Customer\ConsumerDetail.cs" />
     <Compile Include="Customer\ContractorList.cs" />
+    <Compile Include="Customer\CountReport.cs" />
     <Compile Include="Customer\Interfaces\IConnectionLogReporsitory.cs" />
     <Compile Include="Customer\Interfaces\IConnectionRepository.cs" />
     <Compile Include="Customer\LetterDetails.cs" />
     <Compile Include="Customer\LetterSentDetails.cs" />
+    <Compile Include="Customer\MeterRemovedAccounDetails.cs" />
+    <Compile Include="Customer\MeterRemovedDate.cs" />
     <Compile Include="Customer\OrderCardDetails.cs" />
     <Compile Include="Customer\PaymentDetails.cs" />
     <Compile Include="Customer\ReconnectionDetails.cs" />

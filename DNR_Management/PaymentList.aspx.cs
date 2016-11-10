@@ -66,7 +66,6 @@ namespace DNR_Manager
                 }
             
             }
-            
         }
     }
 }

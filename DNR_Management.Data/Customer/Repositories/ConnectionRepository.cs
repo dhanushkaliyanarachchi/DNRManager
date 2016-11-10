@@ -178,8 +178,13 @@ namespace DNR_Manager.Data.Customer.Repositories
                 {
                     newConnectionLog.logId = (int)reader["logId"];
                     //string rCode = (string)reader["[Reader Code]"];
-                    newConnectionLog.DisconnectedDate = (DateTime)reader["DisconnectedDate"];
-                    newConnectionLog.DisconnectedBy = MyToString(reader["DisconnectedBy"]);
+                    newConnectionLog.DisconnectedDate = reader["DisconnectedDate"] != DBNull.Value ? (DateTime)reader["DisconnectedDate"] : DateTime.MinValue;
+                    newConnectionLog.DisconnectedBy = reader["DisconnectedBy"] != DBNull.Value ? (string)reader["DisconnectedBy"] : "";
+                    newConnectionLog.OrderCardStatus = reader["OrderCardStatus"] != DBNull.Value ? (int)reader["OrderCardStatus"] : 8;
+                    newConnectionLog.MeterRemovedStatus = reader["MeterRemovedStatus"] != DBNull.Value ? (int)reader["MeterRemovedStatus"] : 8;
+                    newConnectionLog.LetterSentStatus = reader["MeterRemovedStatus"] != DBNull.Value ? (int)reader["MeterRemovedStatus"] : 8;
+                    newConnectionLog.LetterSentStatus = reader["LetterStatus"] != DBNull.Value ? (int)reader["LetterStatus"] : 8;
+                    
                     //newConnectionLog.DisconnectedBy = (string)reader["DisconnectedBy"];
                     //newConnectionLog.PaymentMode = (string)reader["PaymentMode"];
                     //newConnectionLog.DisconnectedBy = MyToString(reader["ReconnectedBy"]);
@@ -217,14 +222,19 @@ namespace DNR_Manager.Data.Customer.Repositories
                     newConnection.connectionStatus = (int)reader["connectionStatus"];
                 }
 
-                return newConnection;
             }
 
             catch (Exception e)
             {
-                return newConnection;
+                
             }
- 
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+            return newConnection;
         }
 
         public bool AddPaymentDetails(string PMethod, string AccNo, DateTime Date, string contactNo)
@@ -702,7 +712,7 @@ namespace DNR_Manager.Data.Customer.Repositories
                     newOrderCard.Lname = reader["Cust Lname"] != DBNull.Value ? (string)reader["Cust Lname"] : "";
                     newOrderCard.AddressLine1 = reader["Address 1"] != DBNull.Value ? (string)reader["Address 1"] : "";
                     newOrderCard.AddressLine2 = reader["Address 2"] != DBNull.Value ? (string)reader["Address 2"] : "";
-                    newOrderCard.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 4"] : "";
+                    newOrderCard.AddressLine3 = reader["Address 3"] != DBNull.Value ? (string)reader["Address 3"] : "";
                     newOrderCard.Depot = reader["Depot"] != DBNull.Value ? (string)reader["Depot"] : "";
                     newOrderCard.OrderCardID = reader["OrderCardID"] != DBNull.Value ? (string)reader["OrderCardID"] : "";
                     OrdercardList.Add(newOrderCard);
@@ -721,6 +731,51 @@ namespace DNR_Manager.Data.Customer.Repositories
             }
 
             return OrdercardList;
+        }
+
+        public int CheckForPaymentDetails(string accNo)
+        {
+            int status = 0;
+            string selectQuery = string.Format("SELECT * FROM ReconnectionDetails WHERE AccountNo = {0}", accNo);
+            string selectLogDetails = string.Format("SELECT * FROM ConnectionLogs WHERE AccountNo = {0} AND Completness = 0 AND DisconnectedBy IS NULL AND DisconnectedDate IS NULL AND ReconnectedBy IS NOT NULL", accNo);
+            try
+            {
+                command.CommandText = selectLogDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                if (reader.HasRows)
+                {
+                    status = 1;
+                    reader.Close();
+                }
+
+                else
+                {
+                    reader.Close();
+                    command.CommandText = selectQuery;
+                    reader = command.ExecuteReader();
+                    if (reader.HasRows)
+                    {
+                        status = 2;
+                    }
+
+                    else
+                    {
+                        status = 0;
+                    }
+                }
+            }
+
+            catch(Exception ex){
+
+            }
+
+            finally
+            {
+                connection.Close();
+                reader.Close();
+            }
+            return status;
         }
     }
 }

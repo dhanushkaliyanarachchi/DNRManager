@@ -20,6 +20,9 @@ namespace DNR_Manager.Models
         public DateTime Time { get; set; }
         public string FirstName { get; set; }
         public string SecondName { get; set; }
+        public int OrderCardStatus { get; set; }
+        public int MeterRemovedStatus { get; set; }
+        public int LetterSentStatus { get; set; }
         //public string WalkOrder { get; set; } walkOder should be loaded when enter an acc no.
     } 
 }

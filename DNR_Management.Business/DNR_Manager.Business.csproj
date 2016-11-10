@@ -43,8 +43,11 @@
     <Compile Include="Models\ConnectionLogModel.cs" />
     <Compile Include="Models\ConnectionModel.cs" />
     <Compile Include="Models\ContractorListModel.cs" />
+    <Compile Include="Models\CountReportModal.cs" />
     <Compile Include="Models\LetterDetailModel.cs" />
     <Compile Include="Models\LetterSentDetailModel.cs" />
+    <Compile Include="Models\MeterRemovedAccounListModel.cs" />
+    <Compile Include="Models\MeterRemoveDetailsModel.cs" />
     <Compile Include="Models\OrderCardListModel.cs" />
     <Compile Include="Models\PaymentDetailsModel.cs" />
     <Compile Include="Models\PaymentModel.cs" />
