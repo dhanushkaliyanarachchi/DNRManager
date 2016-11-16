@@ -20,10 +20,12 @@ namespace DNR_Manager
             connectionService = new ConnectionService();
             if (!IsPostBack)
             {
-                DateTime DateNow = DateTime.Today();
+                string EndDate = DateTime.Now.ToString("yyyy-MM-dd");
+                string FromDate = DateTime.Now.Year.ToString() + "-" + DateTime.Now.Month.ToString() + "-01";
                 var CountReportModelToUi = new CountReportModal();
                 CountReportModelToUi = connectionService.getCountModalToUI(FromDate, EndDate);
-                return CountReportModelToUi;
+                ClientScript.RegisterStartupScript(GetType(), "Javascript", "javascript:LoadReportDetails('" + FromDate + "','" + EndDate + "','" + CountReportModelToUi.DisconnectionCount + "','" + CountReportModelToUi.ReconnectionCount + "','" + CountReportModelToUi.DisconnectionNotYetReconnectCount + "','" + CountReportModelToUi.OrderCardCount + "','" + CountReportModelToUi.MeterRemovalCount + "','" + CountReportModelToUi.FinalizedAccountCount + "'); ", true);
+
             }
 
             else

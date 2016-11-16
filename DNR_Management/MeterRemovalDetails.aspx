@@ -18,7 +18,7 @@
                                 <input type="date" id="ReportEndDate" class="form-control" />
                             </div>
                             <div class="col-sm-2">
-                                <input type="button" id="btnDenerate" class="btn btn-default" value="Generate Report" />
+                                <input type="button" id="btnGenerate" class="btn btn-default" value="Generate Report" />
                             </div>
                         </div>
                     </div>
@@ -26,10 +26,11 @@
             </div>
         </div>
         <div class="row">
-            <table class="table table-bordered">
+            <table class="table table-bordered" id="MeterRemovalDetails">
                 <thead>
                     <tr>
                         <th>Account No</th>
+                        <th>Walk Order</th>
                         <th>Letter ID</th>
                         <th>Order Card ID</th>
                         <th>Order Card Date</th>
@@ -41,11 +42,51 @@
     </div>
 
     <script type="text/javascript">
-        $('#btnGenerate')(function () {
+        $('#btnGenerate').click(function () {
+            debugger
             var FromDate = $('#ReportStartDate').val();
             var EndDate = $('#ReportEndDate').val();
 
+
+            var DateModel = {
+                FromDate: FromDate,
+                EndDate: EndDate
+            };
+
+            $.ajax({
+                type: "POST",
+                url: "MeterRemovalDetails.aspx/getReportDetailsToUi",
+                data: JSON.stringify(DateModel),
+                contentType: "application/json",
+                dataType: "json",
+                success: function (response) {
+                    Scuccess(response);
+                },
+                failure: function (response) {
+                    alert(response.d);
+                }
+            });
         });
+
+        function Scuccess(response) {
+            var json = response.d;
+            var $table = $("#MeterRemovalDetails");
+            //var circleNo = $("#select option:selected").val().toString();
+            $("#MeterRemovalDetails tr:gt(0)").remove();
+            $(json).each(function () {
+                var tr = [];
+                tr.push('<tr>');
+                tr.push("<td>" + this.AccountNo + "</td>");
+                tr.push("<td>" + this.ReaderCode + "/" + this.DailyPackNo + "/" + this.WalkSequence + "</td>");
+                tr.push("<td>" + this.LetterId + "</td>");
+                tr.push("<td>" + this.OrderCardID + "</td>");
+                tr.push("<td>" + this.OrderCardDate + "</td>");
+                tr.push("<td>" + this.MeterRemovedDate + "</td>");
+                tr.push('</tr>');
+                $('#MeterRemovalDetails').append($(tr.join('')));
+            });
+        }
+
     </script>
 
 </asp:Content>

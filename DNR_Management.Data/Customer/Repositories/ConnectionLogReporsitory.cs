@@ -669,7 +669,7 @@ namespace DNR_Manager.Data.Customer.Repositories
                 affectedRows = command.ExecuteNonQuery();
                 if (affectedRows > 0)
                 {
-                    command.CommandText = DeleteOrderCard;
+                     command.CommandText = DeleteOrderCard;
                     DeletedRows = command.ExecuteNonQuery();
                 }
 
@@ -1084,6 +1084,305 @@ namespace DNR_Manager.Data.Customer.Repositories
             FinalizedAccountCount = getFinalizedAccountCount(FromDate, ToDate)
         };
             return newCountReport;
+        }
+
+        public List<LogReports> getDisconnectionDetails(string FromDate,string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string DisconnectionDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.DisconnectedDate, ConnectionLogs.DisconnectedBy FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE DisconnectedDate >= CONVERT(datetime,'{0}') and DisconnectedDate<= CONVERT(datetime,'{1}')", FromDate, EndDate);
+            try
+            {
+                command.CommandText = DisconnectionDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                     var newLogReport = new LogReports();
+                     newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                     newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                     newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                     newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                     newLogReport.DisconnectedDate = reader["DisconnectedDate"] != DBNull.Value ? (DateTime)reader["DisconnectedDate"] : DateTime.MinValue;
+                     newLogReport.DisconnectedBy = reader["DisconnectedBy"] != DBNull.Value ? (string)reader["DisconnectedBy"] : "";
+                     newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+
+        public List<LogReports> getReconnectionDetails(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string ReconnectionDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.ReconnectedDate, ConnectionLogs.ReconnectedBy, ConnectionLogs.PaymentDate, ConnectionLogs.PaymentMode FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE ReconnectedDate >= CONVERT(datetime,'{0}') and ReconnectedDate<= CONVERT(datetime,'{1}') AND ConnectionLogs.ReconnectedBy IS NOT NULL AND ConnectionLogs.ReconnectedDate IS NOT NULL", FromDate, EndDate);
+            try
+            {
+                command.CommandText = ReconnectionDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.ReconnectedBy = reader["ReconnectedBy"] != DBNull.Value ? (string)reader["ReconnectedBy"] : "";
+                    newLogReport.ReconnectedDate = reader["ReconnectedDate"] != DBNull.Value ? (DateTime)reader["ReconnectedDate"] : DateTime.MinValue;
+                    newLogReport.PaymentDate = reader["PaymentDate"] != DBNull.Value ? (DateTime)reader["PaymentDate"] : DateTime.MinValue;
+                    newLogReport.PaymentMode = reader["PaymentMode"] != DBNull.Value ? (string)reader["PaymentMode"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+        public List<LogReports> getLetterDetails(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string LetterDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.DisconnectedDate, ConnectionLogs.LetterSentDate, ConnectionLogs.LetterId FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE LetterSentDate >= CONVERT(datetime,'{0}') and LetterSentDate<= CONVERT(datetime,'{1}')", FromDate, EndDate);
+            try
+            {
+                command.CommandText = LetterDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.DisconnectedDate = reader["DisconnectedDate"] != DBNull.Value ? (DateTime)reader["DisconnectedDate"] : DateTime.MinValue;
+                    newLogReport.LetterSentDate = reader["LetterSentDate"] != DBNull.Value ? (DateTime)reader["LetterSentDate"] : DateTime.MinValue;
+                    newLogReport.LetterId = reader["LetterId"] != DBNull.Value ? (string)reader["LetterId"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+        public List<LogReports> getOrderCardDetails(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string OrderCardDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.OrderCardDate, ConnectionLogs.LetterSentDate, ConnectionLogs.LetterId, ConnectionLogs.OrderCardID FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE OrderCardDate >= CONVERT(datetime,'{0}') and OrderCardDate<= CONVERT(datetime,'{1}')", FromDate, EndDate);
+            try
+            {
+                command.CommandText = OrderCardDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.OrderCardDate = reader["OrderCardDate"] != DBNull.Value ? (DateTime)reader["OrderCardDate"] : DateTime.MinValue;
+                    newLogReport.LetterSentDate = reader["LetterSentDate"] != DBNull.Value ? (DateTime)reader["LetterSentDate"] : DateTime.MinValue;
+                    newLogReport.LetterId = reader["LetterId"] != DBNull.Value ? (string)reader["LetterId"] : "";
+                    newLogReport.OrderCardID = reader["OrderCardID"] != DBNull.Value ? (string)reader["OrderCardID"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+        public List<LogReports> getMeterRemovalDetails(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string MeterRemovalDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.OrderCardDate, ConnectionLogs.MeterRemovedDate, ConnectionLogs.LetterId, ConnectionLogs.OrderCardID FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE MeterRemovedDate >= CONVERT(datetime,'{0}') and MeterRemovedDate<= CONVERT(datetime,'{1}')", FromDate, EndDate);
+            try
+            {
+                command.CommandText = MeterRemovalDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.OrderCardDate = reader["OrderCardDate"] != DBNull.Value ? (DateTime)reader["OrderCardDate"] : DateTime.MinValue;
+                    newLogReport.LetterSentDate = reader["MeterRemovedDate"] != DBNull.Value ? (DateTime)reader["MeterRemovedDate "] : DateTime.MinValue;
+                    newLogReport.LetterId = reader["LetterId"] != DBNull.Value ? (string)reader["LetterId"] : "";
+                    newLogReport.OrderCardID = reader["OrderCardID"] != DBNull.Value ? (string)reader["OrderCardID"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+        public List<LogReports> getFinalizedAccountDetails(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string FinalizedAccountDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.OrderCardID, ConnectionLogs.MeterRemovedDate, ConnectionLogs.FinalizedDate FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE FinalizedDate >= CONVERT(datetime,'{0}') and FinalizedDate<= CONVERT(datetime,'{1}')", FromDate, EndDate);
+            try
+            {
+                command.CommandText = FinalizedAccountDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.MeterRemovedDate = reader["MeterRemovedDate"] != DBNull.Value ? (DateTime)reader["MeterRemovedDate"] : DateTime.MinValue;
+                    newLogReport.FinalizedDate = reader["FinalizedDate"] != DBNull.Value ? (DateTime)reader["FinalizedDate"] : DateTime.MinValue;
+                    newLogReport.OrderCardID = reader["OrderCardID"] != DBNull.Value ? (string)reader["OrderCardID"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+        public List<LogReports> getDisconnectedNotYetReconnectedDetails(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string DisconnectionDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.DisconnectedDate, ConnectionLogs.DisconnectedBy FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE DisconnectedDate >= CONVERT(datetime,'{0}') and DisconnectedDate<= CONVERT(datetime,'{1}') AND Completness = 0 AND ReconnectedBy IS NULL AND ReconnectedDate IS NULL", FromDate, EndDate);
+            try
+            {
+                command.CommandText = DisconnectionDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.DisconnectedDate = reader["DisconnectedDate"] != DBNull.Value ? (DateTime)reader["DisconnectedDate"] : DateTime.MinValue;
+                    newLogReport.DisconnectedBy = reader["DisconnectedBy"] != DBNull.Value ? (string)reader["DisconnectedBy"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
+        }
+
+        public List<LogReports> getDisconnectionDetailsToBeAdded(string FromDate, string EndDate)
+        {
+            List<LogReports> newList = new List<LogReports>();
+            string ReconnectionDetails = string.Format("SELECT ConsumerDetails.[Account No], ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConnectionLogs.ReconnectedDate, ConnectionLogs.ReconnectedBy, ConnectionLogs.PaymentDate, ConnectionLogs.PaymentMode FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConsumerDetails.[Account No] = ConnectionLogs.AccountNo WHERE ReconnectedDate >= CONVERT(datetime,'{0}') and ReconnectedDate<= CONVERT(datetime,'{1}') AND ConnectionLogs.Completness = 0 AND ConnectionLogs.DisconnectedBy IS NULL AND DisconnectedDate IS NULL", FromDate, EndDate);
+            try
+            {
+                command.CommandText = ReconnectionDetails;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    var newLogReport = new LogReports();
+                    newLogReport.AccountNo = reader["Account No"] != DBNull.Value ? (string)reader["Account No"] : "";
+                    newLogReport.ReaderCode = reader["Reader Code"] != DBNull.Value ? (string)reader["Reader Code"] : "";
+                    newLogReport.DailyPackNo = reader["Daily Pack No"] != DBNull.Value ? (string)reader["Daily Pack No"] : "";
+                    newLogReport.WalkSequence = reader["Walk Seq"] != DBNull.Value ? (string)reader["Walk Seq"] : "";
+                    newLogReport.ReconnectedBy = reader["ReconnectedBy"] != DBNull.Value ? (string)reader["ReconnectedBy"] : "";
+                    newLogReport.ReconnectedDate = reader["ReconnectedDate"] != DBNull.Value ? (DateTime)reader["ReconnectedDate"] : DateTime.MinValue;
+                    newLogReport.PaymentDate = reader["PaymentDate"] != DBNull.Value ? (DateTime)reader["PaymentDate"] : DateTime.MinValue;
+                    newLogReport.PaymentMode = reader["PaymentMode"] != DBNull.Value ? (string)reader["PaymentMode"] : "";
+                    newList.Add(newLogReport);
+                }
+            }
+
+            catch (Exception ex)
+            {
+
+            }
+
+            finally
+            {
+                reader.Close();
+                connection.Close();
+            }
+
+            return newList;
         }
     }
 }

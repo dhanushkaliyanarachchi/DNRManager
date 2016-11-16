@@ -796,7 +796,12 @@
             //var accountNo = $('#TextBoxAccountNumber').val();
             var accountNo = $("#<%=TextBoxAccountNumber.ClientID %>").val();
             var MRDate = $('#TextBoxMeterRemovedDate').val();
-            updateMeterRemovedDetails(accountNo, MRDate);
+            if (MRDate != "") {
+                updateMeterRemovedDetails(accountNo, MRDate);
+            }
+            else {
+                alert("Please insert Valid Date");
+            }
         });
 
         function updateMeterRemovedDetails(accountNo, MRDate)  {

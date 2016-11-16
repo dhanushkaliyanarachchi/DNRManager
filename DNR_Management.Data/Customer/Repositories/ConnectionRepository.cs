@@ -619,7 +619,7 @@ namespace DNR_Manager.Data.Customer.Repositories
 
         public int getnextIDfromOrderCardList(string Depot, string year)
         {
-            string querytogetId = string.Format("SELECT OrderCardID FROM OrderCardList WHERE LetterID LIKE '{0}/MR/{1}/%'", Depot, year);
+            string querytogetId = string.Format("SELECT OrderCardID FROM OrderCardList WHERE OrderCardID LIKE '{0}/MR/{1}/%'", Depot, year);
             command.CommandText = querytogetId;
             int Id = 0;
             try

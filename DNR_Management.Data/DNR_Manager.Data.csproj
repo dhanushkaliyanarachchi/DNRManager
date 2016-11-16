@@ -51,6 +51,7 @@
     <Compile Include="Customer\Interfaces\IConnectionRepository.cs" />
     <Compile Include="Customer\LetterDetails.cs" />
     <Compile Include="Customer\LetterSentDetails.cs" />
+    <Compile Include="Customer\LogReports.cs" />
     <Compile Include="Customer\MeterRemovedAccounDetails.cs" />
     <Compile Include="Customer\MeterRemovedDate.cs" />
     <Compile Include="Customer\OrderCardDetails.cs" />

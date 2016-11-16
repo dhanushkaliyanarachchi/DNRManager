@@ -286,7 +286,7 @@ namespace DNR_Manager.Business
                 DateTime t2 = item.LetterSentDate;
                 TimeSpan time = t1 - t2;
                 double ti = time.TotalDays;
-                if (ti > 14)
+                if (ti >= 14)
                     newOrderCardDetailModel.Add(new OrderCardListModel {AccountNo = item.AccountNo, AddressLine1 = item.AddressLine1, AddressLine2 = item.AddressLine2, AddressLine3 = item.AddressLine3, DailypackNo = item.DailypackNo, Depot = item.Depot, Fname = item.Fname, Lname = item.Lname, LetterID = item.LetterID, LetterSentDate = item.LetterSentDate, ReaderCode = item.ReaderCode, WalkSeq = item.WalkSeq});
             }
 
@@ -416,6 +416,96 @@ namespace DNR_Manager.Business
             };
 
             return newCountReportModel;
+        }
+
+        public List<LogReportModal> DisconectionReportToUi(string FromDate, string ToDate)
+        {
+            var DisconnectionDetailsReport = _connectionLogRepository.getDisconnectionDetails(FromDate, ToDate);
+            var DisconectionReportModal = new List<LogReportModal>();
+            foreach (var item in DisconnectionDetailsReport)
+            {
+                DisconectionReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, DisconnectedDate = item.DisconnectedDate.ToString("yyyy-MM-dd"), DisconnectedBy = item.DisconnectedBy, DisconnectedTime = item.DisconnectedDate.ToString("HH:mm") });
+            }
+
+            return DisconectionReportModal;
+        }
+
+        public List<LogReportModal> ReconectionReportToUi(string FromDate, string ToDate)
+        {
+            var ReconnectionDetailsReport = _connectionLogRepository.getReconnectionDetails(FromDate, ToDate);
+            var ReconectionReportModal = new List<LogReportModal>();
+            foreach (var item in ReconnectionDetailsReport)
+            {
+                ReconectionReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, ReconnectedDate = item.ReconnectedDate.ToString("yyyy-MM-dd"), ReconnectedBy = item.ReconnectedBy, PaymentDate = item.PaymentDate.ToString("yyyy-MM-dd"), PaymentMode = item.PaymentMode });
+            }
+            return ReconectionReportModal; 
+        }
+
+        public List<LogReportModal> LetterReportToUi(string FromDate, string ToDate)
+        {
+            var LetterDetailsReport = _connectionLogRepository.getLetterDetails(FromDate, ToDate);
+            var letterReportModal = new List<LogReportModal>();
+            foreach (var item in LetterDetailsReport)
+            {
+                letterReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, DisconnectedDate = item.DisconnectedDate.ToString("yyyy-MM-dd"), LetterSentDate = item.LetterSentDate.ToString("yyyy-MM-dd"), LetterId = item.LetterId });
+            }
+            return letterReportModal;
+        }
+
+        public List<LogReportModal> OrderCardReportToUi(string FromDate, string ToDate)
+        {
+            var OrderCardDetalsReport = _connectionLogRepository.getOrderCardDetails(FromDate, ToDate);
+            var OrderCardReportModal = new List<LogReportModal>();
+            foreach (var item in OrderCardDetalsReport)
+            {
+                OrderCardReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, OrderCardDate = item.OrderCardDate.ToString("yyyy-MM-dd"), LetterSentDate = item.LetterSentDate.ToString("yyyy-MM-dd"), LetterId = item.LetterId, OrderCardID = item.OrderCardID });
+            }
+            return OrderCardReportModal;
+        }
+
+        public List<LogReportModal> MeterRemoveDetailsReportToUi(string FromDate, string ToDate)
+        {
+            var MeterRemoveDetailsReport = _connectionLogRepository.getOrderCardDetails(FromDate, ToDate);
+            var MeterRemoveDetailsReportModal = new List<LogReportModal>();
+            foreach (var item in MeterRemoveDetailsReport)
+            {
+                MeterRemoveDetailsReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, OrderCardDate = item.OrderCardDate.ToString("yyyy-MM-dd"), MeterRemovedDate = item.MeterRemovedDate.ToString("yyyy-MM-dd"), LetterId = item.LetterId, OrderCardID = item.OrderCardID });
+            }
+            return MeterRemoveDetailsReportModal;
+        }
+
+        public List<LogReportModal> FinalizedAccDetailsReportToUi(string FromDate, string ToDate)
+        {
+            var FinalizedAccDetailReport = _connectionLogRepository.getFinalizedAccountDetails(FromDate, ToDate);
+            var FinalizedAccDetailReportModal = new List<LogReportModal>();
+            foreach (var item in FinalizedAccDetailReport)
+            {
+                FinalizedAccDetailReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, OrderCardID = item.OrderCardID, MeterRemovedDate = item.MeterRemovedDate.ToString("yyyy-MM-dd"), FinalizedDate = item.FinalizedDate.ToString("yyyy-MM-dd") });
+            }
+            return FinalizedAccDetailReportModal;
+        }
+
+        public List<LogReportModal> DisconectionNotYetReconnectedReportToUi(string FromDate, string ToDate)
+        {
+            var DisconnectionDetailsReport = _connectionLogRepository.getDisconnectedNotYetReconnectedDetails(FromDate, ToDate);
+            var DisconectionReportModal = new List<LogReportModal>();
+            foreach (var item in DisconnectionDetailsReport)
+            {
+                DisconectionReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, DisconnectedDate = item.DisconnectedDate.ToString("yyyy-MM-dd"), DisconnectedBy = item.DisconnectedBy, DisconnectedTime = item.DisconnectedDate.ToString("HH:mm") });
+            }
+
+            return DisconectionReportModal;
+        }
+
+        public List<LogReportModal> DisconnectionDetailsTobeAddedReportToUi(string FromDate, string ToDate)
+        {
+            var ReconnectionDetailsReport = _connectionLogRepository.getDisconnectionDetailsToBeAdded(FromDate, ToDate);
+            var ReconectionReportModal = new List<LogReportModal>();
+            foreach (var item in ReconnectionDetailsReport)
+            {
+                ReconectionReportModal.Add(new LogReportModal { AccountNo = item.AccountNo, ReaderCode = item.ReaderCode, DailyPackNo = item.DailyPackNo, WalkSequence = item.WalkSequence, ReconnectedDate = item.ReconnectedDate.ToString("yyyy-MM-dd"), ReconnectedBy = item.ReconnectedBy, PaymentDate = item.PaymentDate.ToString("yyyy-MM-dd"), PaymentMode = item.PaymentMode });
+            }
+            return ReconectionReportModal;
         }
     }
 }

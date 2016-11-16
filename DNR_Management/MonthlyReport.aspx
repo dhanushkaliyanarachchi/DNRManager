@@ -109,4 +109,18 @@
             }
         });
     </script>
+    <script type ="text/javascript">
+        function LoadReportDetails(Date1,Date2,DCount,RCount,DRCount,OCCout,MRCount,FACount) {
+            debugger
+            $('#ReportStartDate').val(Date1);
+            $('#ReportEndDate').val(Date2);
+            
+            $('#NoofDisconnections').val(DCount);
+            $('#NoofReconnections').val(RCount);
+            $('#NoOfDisCon_nNotR').val(DRCount);
+            $('#NoofOrderCards').val(OCCout);
+            $('#NoOfMeterRemovals').val(MRCount);
+            $('#NoOfFinalizedAccounts').val(FACount);
+        }
+    </script>
 </asp:Content>
