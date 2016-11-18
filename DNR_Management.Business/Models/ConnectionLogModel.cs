@@ -17,6 +17,7 @@ namespace DNR_Manager.Business.Models
         public DateTime OrderCardDate { get; set; }
         public DateTime MeterRemovedDate { get; set; }
         public DateTime FinalizedDate { get; set; }
+        public DateTime LetterSentDate { get; set; }
 
     }
 }

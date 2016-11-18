@@ -118,7 +118,7 @@ namespace DNR_Manager.Data.Customer.Repositories
 
         public List<ConnectionLog> GetConnectionLog(string accNo)
         {
-            string connectionLogquery = string.Format("SELECT DisconnectedDate,ReconnectedDate,OrderCardDate,MeterRemovedDate,FinalizedDate FROM ConnectionLogs WHERE AccountNo = '{0}' ORDER BY DisconnectedDate ASC", accNo);
+            string connectionLogquery = string.Format("SELECT DisconnectedDate,ReconnectedDate,OrderCardDate,MeterRemovedDate,FinalizedDate,LetterSentDate FROM ConnectionLogs WHERE AccountNo = '{0}' ORDER BY DisconnectedDate ASC", accNo);
             List<ConnectionLog> Loglist = new List<ConnectionLog>();
             try
             {
@@ -131,6 +131,7 @@ namespace DNR_Manager.Data.Customer.Repositories
                     newConnectionLogListItem.ReconnectedDate =  reader["ReconnectedDate"] != DBNull.Value ? (DateTime)reader["ReconnectedDate"] : DateTime.MinValue;
                     newConnectionLogListItem.OrderCardDate = reader["OrderCardDate"] != DBNull.Value ? (DateTime)reader["OrderCardDate"] : DateTime.MinValue;
                     newConnectionLogListItem.MeterRemovedDate = reader["MeterRemovedDate"] != DBNull.Value ? (DateTime)reader["MeterRemovedDate"] : DateTime.MinValue;
+                    newConnectionLogListItem.LetterSentDate = reader["LetterSentDate"] != DBNull.Value ? (DateTime)reader["LetterSentDate"] : DateTime.MinValue;
                     newConnectionLogListItem.FinalizedDate = reader["FinalizedDate"] != DBNull.Value ? (DateTime)reader["FinalizedDate"] : DateTime.MinValue;
                     Loglist.Add(newConnectionLogListItem);
                 }   
@@ -506,7 +507,7 @@ namespace DNR_Manager.Data.Customer.Repositories
 
         public List<OrderCardDetails> getOrderCardListDetails()
         {
-            string getOrderCardQuery = string.Format("SELECT ConnectionLogs.AccountNo AS AccountNo, ConnectionLogs.LetterSentDate, ConnectionLogs.LetterId, ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConsumerDetails.[Cust Fname],  ConsumerDetails.[Cust Lname], ConsumerDetails.[Address 1], ConsumerDetails.[Address 2], ConsumerDetails.[Address 3], ConsumerDetails.Depot FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No] WHERE ConnectionLogs.LetterStatus = 2 AND ConnectionLogs.Completness = 0");
+            string getOrderCardQuery = string.Format("SELECT ConnectionLogs.AccountNo AS AccountNo, ConnectionLogs.LetterSentDate, ConnectionLogs.LetterId, ConsumerDetails.[Reader Code], ConsumerDetails.[Daily Pack No], ConsumerDetails.[Walk Seq], ConsumerDetails.[Cust Fname],  ConsumerDetails.[Cust Lname], ConsumerDetails.[Address 1], ConsumerDetails.[Address 2], ConsumerDetails.[Address 3], ConsumerDetails.Depot FROM ConnectionLogs INNER JOIN ConsumerDetails ON ConnectionLogs.AccountNo = ConsumerDetails.[Account No] WHERE ConnectionLogs.LetterStatus = 2 AND ConnectionLogs.Completness = 0 AND ConnectionLogs.OrderCardStatus = 0");
             List<OrderCardDetails> OrdercardList = new List<OrderCardDetails>();
             
             try
@@ -620,10 +621,10 @@ namespace DNR_Manager.Data.Customer.Repositories
 
         public void CancellOrderCard(string accNo)
         {
-            DateTime Rdate = DateTime.MinValue;
+            DateTime Rdate = DateTime.Now;
             int affectedRows = 0;
             int deletedRows = 0;
-            string CancellOrderCardQuery = string.Format("UPDATE ConnectionLogs SET ThousandListStaus = '0', Completness = '1', ReconnectedDate = {0} WHERE AccountNo = '{1}' AND Completness = '0' AND OrderCardStatus = '1'", Rdate.ToString("yyyy-MM-dd"), accNo);
+            string CancellOrderCardQuery = string.Format("UPDATE ConnectionLogs SET ThousandListStaus = '0', Completness = '1', ReconnectedDate = '{0}' WHERE AccountNo = '{1}' AND Completness = '0' AND OrderCardStatus = '1'", Rdate.ToString("yyyy-MM-dd"), accNo);
             string DeleteOrderCard = string.Format("DELETE FROM OrderCardList WHERE AccountNo = '{0}'", accNo);
             string querytoUpdateconnection = string.Format("UPDATE Connections SET connectionStatus = '1' WHERE AccountNo = '{0}'", accNo);
             try
@@ -660,7 +661,7 @@ namespace DNR_Manager.Data.Customer.Repositories
             int affectedRows = 0;
             int DeletedRows = 0;
             DateTime OrderCardDate = DateTime.Today;
-            string updateOrderCardDetails = string.Format("UPDATE ConnectionLogs SET OrderCardDate = {0}, OrderCardID = '{1}', OrderCardStatus = 2, MeterRemovedStatus = 0 WHERE Completness = 0 AND AccountNo = '{2}' AND OrderCardStatus = 1", OrderCardDate.ToString("yyyy-MM-dd"), OrerCardID, accNo);
+            string updateOrderCardDetails = string.Format("UPDATE ConnectionLogs SET OrderCardDate = '{0}', OrderCardID = '{1}', OrderCardStatus = 2, MeterRemovedStatus = 0 WHERE Completness = 0 AND AccountNo = '{2}' AND OrderCardStatus = 1", OrderCardDate.ToString("yyyy-MM-dd"), OrerCardID, accNo);
             string DeleteOrderCard = string.Format("DELETE FROM OrderCardList WHERE AccountNo = '{0}'", accNo);
             try
             {

@@ -124,7 +124,7 @@ namespace DNR_Manager.Business
             var newLogModel = new List<ConnectionLogModel>();
             foreach (var item in log)
             {
-                newLogModel.Add(new ConnectionLogModel {DisconnectedDate = item.DisconnectedDate, ReconnectedDate = item.ReconnectedDate, OrderCardDate = item.OrderCardDate, MeterRemovedDate = item.MeterRemovedDate, FinalizedDate =item.FinalizedDate });
+                newLogModel.Add(new ConnectionLogModel {DisconnectedDate = item.DisconnectedDate, ReconnectedDate = item.ReconnectedDate, OrderCardDate = item.OrderCardDate, MeterRemovedDate = item.MeterRemovedDate, FinalizedDate =item.FinalizedDate, LetterSentDate = item.LetterSentDate });
             }
 
             return newLogModel;
@@ -159,16 +159,19 @@ namespace DNR_Manager.Business
 
         public int getnextID(string Depot,string year)
         {
+            int maxId = 0;
             int maxIdfromConnectionLog = _connectionLogRepository.getnextID(Depot, year);
             int maxIdfromLetterDetails = _connectionRepository.getnextIDfromLetterToBeSent(Depot, year);
             if (maxIdfromConnectionLog > maxIdfromLetterDetails)
             {
-                return maxIdfromConnectionLog ++;
+                maxId = maxIdfromConnectionLog +1;
+                return maxId;
             }
 
             else
             {
-                return maxIdfromLetterDetails + 1 ;
+                maxId = maxIdfromLetterDetails + 1 ;
+                return maxId;
             }
         }
 

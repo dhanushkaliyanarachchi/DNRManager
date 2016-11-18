@@ -157,6 +157,14 @@ outline: none;
                          <td><%: item.ReconnectedDate %></td>
                         <%}%>
 
+                        <%if (item.LetterSentDate == DateTime.MinValue)
+                          {%>
+                        <td></td>
+                        <%}
+                        else{%>
+                         <td><%: item.LetterSentDate %></td>
+                        <%}%>
+
                         <%if (item.OrderCardDate == DateTime.MinValue)
                           {%>
                         <td></td>

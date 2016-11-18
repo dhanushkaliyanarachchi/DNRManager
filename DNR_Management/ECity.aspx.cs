@@ -57,7 +57,7 @@ namespace DNR_Manager.Web
                         }
                         else if (acountDetail.DisconnectedBy != null && acountDetail.DisconnectedBy != "")
                         {
-                            if (acountDetail.LetterSentStatus == 0 || acountDetail.LetterSentStatus == 1)
+                            if (acountDetail.LetterSentStatus == 0 && acountDetail.LetterSentStatus == 1)
                             {
                                 TextBoxStaus.Text = "Disconnected";
                             }

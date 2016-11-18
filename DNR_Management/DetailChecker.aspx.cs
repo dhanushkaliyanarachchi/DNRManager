@@ -131,7 +131,7 @@ namespace DNR_Manager
                 {
                     string currentYear = DateTime.Today.Year.ToString();
                     int id = connectionService.getnextID("F", currentYear);
-                    letterID = "F/" +currentYear+ "/" +id.ToString("0000")+ "";
+                    letterID = "F/" +currentYear+ "/" +id.ToString("0000");
                     int affctedrows = connectionService.insertLetterDetails(accNo, letterID);
                     if (affctedrows > 0)
                     {
@@ -142,7 +142,7 @@ namespace DNR_Manager
                 {
                     string currentYear = DateTime.Today.Year.ToString();
                     int id = connectionService.getnextID("M", currentYear);
-                    letterID = "M/" + currentYear + "/" + id.ToString("0000") + "";
+                    letterID = "M/" + currentYear + "/" + id.ToString("0000");
                     int affctedrows = connectionService.insertLetterDetails(accNo, letterID);
                     if (affctedrows > 0)
                     {
@@ -154,7 +154,7 @@ namespace DNR_Manager
                 {
                     string currentYear = DateTime.Today.Year.ToString();
                     int id = connectionService.getnextID("B", currentYear);
-                    letterID = "B/" + currentYear + "/" + id.ToString("0000") + "";
+                    letterID = "B/" + currentYear + "/" + id.ToString("0000");
                     int affctedrows = connectionService.insertLetterDetails(accNo, letterID);
                     if (affctedrows > 0)
                     {
@@ -166,7 +166,7 @@ namespace DNR_Manager
                 {
                     string currentYear = DateTime.Today.Year.ToString();
                     int id = connectionService.getnextID("P", currentYear);
-                    letterID = "P/" + currentYear + "/" + id.ToString("0000") + "";
+                    letterID = "P/" + currentYear + "/" + id.ToString("0000");
                     int affctedrows = connectionService.insertLetterDetails(accNo, letterID);
                     if (affctedrows > 0)
                     {
@@ -178,7 +178,7 @@ namespace DNR_Manager
                 {
                     string currentYear = DateTime.Today.Year.ToString();
                     int id = connectionService.getnextID("A", currentYear);
-                    letterID = "A/" + currentYear + "/" + id.ToString("0000") + "";
+                    letterID = "A/" + currentYear + "/" + id.ToString("0000");
                     int affctedrows = connectionService.insertLetterDetails(accNo, letterID);
                     if (affctedrows > 0)
                     {
